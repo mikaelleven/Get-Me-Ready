@@ -1,2 +1,2 @@
-get-me-ready
-============
+Get Me Ready (GMR)
+==================
