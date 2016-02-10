@@ -55,16 +55,14 @@ source "$DIR/Development.sh"
 # Install nice-to-have applications
 #source "$DIR/NiceToHave.sh"
 
- 
 # cleanup
 brew cleanup --force
 rm -f -r /Library/Caches/Homebrew/*
 
 # Performs some tweaks
-source "$DIR/HotCorners.sh"
-
-# Run special commands for Sublime Text
-source "$DIR/SublimeFix.sh"
+source "$DIR/HotCorners.sh" # Hot corners fix
+source "$DIR/Tweaks.sh" # Generals OS tweaks
+source "$DIR/SublimeFix.sh" # Run special commands for Sublime Text
 
 
 # Fix other scripts that might be run individually later
@@ -73,6 +71,7 @@ chmod +x "$DIR/Productivity.sh"
 chmod +x "$DIR/Development.sh"
 chmod +x "$DIR/SublimeFix.sh"
 chmod +x "$DIR/HotCorners.sh"
+chmod +x "$DIR/Tweaks.sh"
 
 
 echo 
