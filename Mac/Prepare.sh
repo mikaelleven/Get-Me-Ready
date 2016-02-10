@@ -3,6 +3,12 @@
 echo "Preparing environment..."
 echo 
 
+echo "First we need to install some required software (XCode Tools). A new window will appear, proceed with that installation. When finished return to this terminal window."
+echo 
+read -p "Press any key when ready... " -n1 -s
+echo  '\n'
+
+
 
 # Install Homebrew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
