@@ -1,0 +1,583 @@
+# OSX For Hackers
+
+http://lapwinglabs.com/blog/hacker-guide-to-setting-up-your-mac
+
+# Install Mackup
+brew install mackup
+
+# Launch it and back up your files
+mackup backup
+
+
+####
+# Install GNU core utilities (those that come with OS X are outdated)
+brew install coreutils
+
+# Install GNU `find`, `locate`, `updatedb`, and `xargs`, g-prefixed
+brew install findutils
+
+# Install Bash 4
+brew install bash
+
+# Install more recent versions of some OS X tools
+brew tap homebrew/dupes
+brew install homebrew/dupes/grep
+
+$PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+
+####
+
+binaries=(
+  graphicsmagick
+  webkit2png
+  rename
+  python
+  trash
+  node
+  tree
+  ack
+  hub
+  git
+)
+brew install ${binaries[@]}
+
+
+
+bREW:
+qlcolorcode
+screenflick
+appcleaner
+qlmarkdown
+qlstephen
+?tower
+quicklook-json
+apikitchen
+mamp
+
+
+
+
+case $1 in
+  "-s" | "-y" | "--silent" | "silent" )
+    echo "Running in silent mode..."
+    auto=Y
+    shift 1
+    ;;
+  *)
+    auto=N
+    if [ ! -t 0 ]; then
+      echo "Interactive mode needs terminal!" >&2
+      exit 1
+    fi
+    ;;
+esac
+
+
+function ask {
+  while true; do
+ 
+    if [ "$2" == "Y" ]; then
+      prompt="\033[1;32mY\033[0m/n"
+      default=Y
+    elif [ "$2" == "N" ]; then
+      prompt="y/\033[1;32mN\033[0m"
+      default=N
+    else
+      prompt="y/n"
+      default=
+    fi
+ 
+    printf "$1 [$prompt] "
+ 
+    if [ "$auto" == "Y" ]; then
+      echo
+    else
+      read yn
+    fi
+ 
+    if [ -z "$yz" ]; then
+      yn=$default
+    fi
+ 
+    case $yn in
+      [Yy]*) return 0 ;;
+      [Nn]*) return 1 ;;
+    esac
+  done
+}
+
+----
+
+echo "Hide the Spotlight icon?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
+        break;;
+    No ) break;;
+  esac
+done
+
+## UNIHIDE sudo chmod 755 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search && killall SystemUIServer
+
+
+
+echo ""
+echo "Expanding the save panel by default"
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+
+echo ""
+echo "Saving to disk (not to iCloud) by default"
+defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+ 
+
+ echo ""
+echo "Reveal IP address, hostname, OS version, etc. when clicking the clock in the login window"
+sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+ 
+
+
+
+ echo ""
+echo "Check for software updates daily, not just once per week"
+defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
+
+
+
+echo ""
+echo "Remove duplicates in the â€œOpen Withâ€ menu"
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+
+echo ""
+echo "Disable smart quotes and smart dashes as they're annoying when typing code"
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+
+###############################################################################
+# Trackpad, mouse, keyboard, Bluetooth accessories, and input
+###############################################################################
+ 
+echo ""
+echo "Increasing sound quality for Bluetooth headphones/headsets"
+defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
+ 
+echo ""
+echo "Enabling full keyboard access for all controls (e.g. enable Tab in modal dialogs)"
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+ 
+N
+echo ""
+echo "Disabling press-and-hold for keys in favor of a key repeat"
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
+N 
+echo ""
+echo "Setting a blazingly fast keyboard repeat rate (ain't nobody got time fo special chars while coding!)"
+defaults write NSGlobalDomain KeyRepeat -int 0
+
+N 
+echo ""
+echo "Disabling auto-correct"
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+
+N 
+echo ""
+echo "Setting trackpad & mouse speed to a reasonable number"
+defaults write -g com.apple.trackpad.scaling 2
+defaults write -g com.apple.mouse.scaling 2.5
+
+ 
+echo ""
+echo "Turn off keyboard illumination when computer is not used for 5 minutes"
+defaults write com.apple.BezelServices kDimTime -int 300
+
+###############################################################################
+# Screen
+###############################################################################
+ 
+echo ""
+echo "Requiring password immediately after sleep or screen saver begins"
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
+ 
+echo ""
+echo "Setting screenshot format to PNG"
+defaults write com.apple.screencapture type -string "png"
+
+echo ""
+echo "Enabling subpixel font rendering on non-Apple LCDs"
+defaults write NSGlobalDomain AppleFontSmoothing -int 2
+ 
+echo ""
+echo "Enabling HiDPI display modes (requires restart)"
+sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
+ 
+
+
+###############################################################################
+# Finder
+###############################################################################
+ 
+echo ""
+echo "Showing icons for hard drives, servers, and removable media on the desktop"
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+ 
+echo ""
+echo "Show hidden files in Finder by default?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) defaults write com.apple.Finder AppleShowAllFiles -bool true
+        break;;
+    No ) break;;
+  esac
+done
+ 
+echo ""
+echo "Show dotfiles in Finder by default?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) defaults write com.apple.finder AppleShowAllFiles TRUE
+        break;;
+    No ) break;;
+  esac
+done
+ 
+echo ""
+echo "Showing all filename extensions in Finder by default"
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+ 
+echo ""
+echo "Showing status bar in Finder by default"
+defaults write com.apple.finder ShowStatusBar -bool true
+ 
+echo ""
+echo "Allowing text selection in Quick Look/Preview in Finder by default"
+defaults write com.apple.finder QLEnableTextSelection -bool true
+ 
+echo ""
+echo "Displaying full POSIX path as Finder window title"
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+ 
+ 
+echo ""
+echo "Use column view in all Finder windows by default"
+defaults write com.apple.finder FXPreferredViewStyle Clmv
+ 
+echo ""
+echo "Avoiding the creation of .DS_Store files on network volumes"
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+ 
+ 
+echo ""
+echo "Enabling snap-to-grid for icons on the desktop and in other icon views"
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+
+###############################################################################
+# Dock & Mission Control
+###############################################################################
+ 
+# Wipe all (default) app icons from the Dock
+# This is only really useful when setting up a new Mac, or if you don't use
+# the Dock to launch apps.
+#defaults write com.apple.dock persistent-apps -array
+ 
+echo ""
+echo "Setting the icon size of Dock items to 36 pixels for optimal size/screen-realestate"
+defaults write com.apple.dock tilesize -int 40
+ 
+echo ""
+echo "Speeding up Mission Control animations and grouping windows by application"
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock "expose-group-by-app" -bool true
+ 
+###############################################################################
+# Safari & WebKit
+###############################################################################
+ 
+echo ""
+echo "Hiding Safari's bookmarks bar by default"
+defaults write com.apple.Safari ShowFavoritesBar -bool false
+ 
+echo ""
+echo "Hiding Safari's sidebar in Top Sites"
+defaults write com.apple.Safari ShowSidebarInTopSites -bool false
+ 
+echo ""
+echo "Disabling Safari's thumbnail cache for History and Top Sites"
+defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
+ 
+echo ""
+echo "Enabling Safari's debug menu"
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
+ 
+echo ""
+echo "Making Safari's search banners default to Contains instead of Starts With"
+defaults write com.apple.Safari FindOnPageMatchesWordStartsOnly -bool false
+ 
+echo ""
+echo "Removing useless icons from Safari's bookmarks bar"
+defaults write com.apple.Safari ProxiesInBookmarksBar "()"
+ 
+echo ""
+echo "Allow hitting the Backspace key to go to the previous page in history"
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled -bool true
+ 
+echo ""
+echo "Enabling the Develop menu and the Web Inspector in Safari"
+defaults write com.apple.Safari IncludeDevelopMenu -bool true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+defaults write com.apple.Safari "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled" -bool true
+ 
+echo ""
+echo "Adding a context menu item for showing the Web Inspector in web views"
+defaults write NSGlobalDomain WebKitDeveloperExtras -bool true 
+
+###############################################################################
+# Terminal
+###############################################################################
+ 
+echo ""
+echo "Enabling UTF-8 ONLY in Terminal.app and setting the Pro theme by default"
+defaults write com.apple.terminal StringEncodings -array 4
+defaults write com.apple.Terminal "Default Window Settings" -string "Pro"
+defaults write com.apple.Terminal "Startup Window Settings" -string "Pro"
+ 
+
+ #### General
+
+N
+ echo ""
+echo "Disable annoying backswipe in Chrome"
+defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
+ 
+ ###############################################################################
+# Sublime Text
+###############################################################################
+echo ""
+echo "Do you use Sublime Text 3 as your editor of choice and is it installed?"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) echo ""
+        echo "Linking Sublime Text command line"
+        ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
+        echo ""
+        echo "Setting Git to use Sublime Text as default editor"
+        git config --global core.editor "subl -n -w"
+        echo ""
+        echo "Removing Mission Control as it interferes with Sublime Text keyboard shortcut for selecting multiple lines"
+        defaults write com.apple.dock mcx-expose-disabled -bool TRUE
+        break;;
+    No ) break;;
+  esac
+done
+
+
+----
+
+
+
+
+
+
+if ask "Always show scrollbars" N; then
+  defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
+fi
+
+if ask "Expand save panel by default" Y; then
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+fi
+
+if ask "Expand print panel by default" Y; then
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+fi
+
+if ask "Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)" Y; then
+  defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+fi
+
+if ask "Set a shorter Delay until key repeat" Y; then
+  defaults write NSGlobalDomain InitialKeyRepeat -int 18
+fi
+
+if ask "Add a context menu item for showing the Web Inspector in web views" Y; then
+  defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
+fi
+
+if ask "Increase window resize speed for Cocoa applications" Y; then
+  defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
+fi
+
+if ask "Show remaining battery time; hide percentage" N; then
+  defaults write com.apple.menuextra.battery ShowPercent -string "NO"
+  defaults write com.apple.menuextra.battery ShowTime -string "YES"
+fi
+
+if ask "Show remaining battery time; hide percentage" N; then
+  defaults write com.apple.menuextra.battery ShowPercent -string "NO"
+  defaults write com.apple.menuextra.battery ShowTime -string "YES"
+fi
+
+if ask "Allow quitting Finder via ⌘ +Q; doing so will also hide desktop icons" Y; then
+  defaults write com.apple.finder QuitMenuItem -bool true
+fi
+
+if ask "Use current directory as default search scope in Finder" Y; then
+  defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+fi
+
+if ask "Show Path bar in Finder" Y; then
+  defaults write com.apple.finder ShowPathbar -bool true
+fi
+
+if ask "Show Status bar in Finder" Y; then
+  defaults write com.apple.finder ShowStatusBar -bool true
+fi
+
+if ask "Automatically open a new Finder window when a volume is mounted" Y; then
+  defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
+  defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
+  defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
+fi
+
+if ask "Display full POSIX path as Finder window title" Y; then
+  defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+fi
+
+if ask "Remove Dropbox’s green checkmark icons in Finder" N; then
+  file=/Applications/Dropbox.app/Contents/Resources/check.icns
+  [ -e "$file" ] && mv -f "$file" "$file.bak"
+    unset file
+fi
+
+if ask "Show item info below desktop icons" N; then
+  /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+fi
+ 
+if ask "Enable snap-to-grid for desktop icons" Y; then
+  /usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+fi
+
+
+if ask "Disable the warning before emptying the Trash" N; then
+  defaults write com.apple.finder WarnOnEmptyTrash -bool false
+fi
+ 
+if ask "Disable shadow in screenshots" N; then
+  defaults write com.apple.screencapture disable-shadow -bool true
+fi
+ 
+if ask "Enable the 2D Dock" N; then
+  defaults write com.apple.dock no-glass -bool true
+fi
+ 
+if ask "Automatically hide and show the Dock" N; then
+  defaults write com.apple.dock autohide -bool true
+fi
+
+
+if ask "Enable iTunes track notifications in the Dock" Y; then
+  defaults write com.apple.dock itunes-notifications -bool true
+fi
+ 
+if ask "Enable highlight hover effect for the grid view of a stack (Dock)" Y; then
+  defaults write com.apple.dock mouse-over-hilte-stack -bool true
+fi
+ 
+if ask "Enable spring loading for all Dock items" N; then
+  defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
+fi
+
+if ask "Show indicator lights for open applications in the Dock" Y; then
+  defaults write com.apple.dock show-process-indicators -bool true
+fi
+
+if ask "Don't animate opening applications from the Dock" N; then
+  defaults write com.apple.dock launchanim -bool false
+fi
+
+if ask "Set the icon size of the Dock to 36 pixels" Y; then
+  defaults write com.apple.dock tilesize -int 36
+fi
+
+if ask "Make the animation for showing Dock faster and reduce the delay before it starts" Y; then
+  defaults write com.apple.dock autohide-time-modifier -float 0.6
+fi
+ 
+if ask "Remove the delay for showing the Dock in full screen" N; then
+  defaults write com.apple.dock autohide-fullscreen-delayed -bool false
+fi
+
+if ask "Enable AirDrop over Ethernet and on unsupported Macs running Lion" Y; then
+  defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
+fi
+
+if ask "Avoid creating .DS_Store files on network volumes" Y; then
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+fi
+
+if ask "Require password immediately after sleep or screen saver begins" Y; then
+  defaults write com.apple.screensaver askForPassword -int 1
+  defaults write com.apple.screensaver askForPasswordDelay -int 0
+fi
+
+if ask "Enable tap to click on Trackpad and login screen" Y; then
+  defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+  defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+  defaults write com.apple.mouse.tapBehaviour -int 1
+fi
+
+if ask "A bit faster Trackpad" N; then
+  defaults write NSGlobalDomain com.apple.trackpad.scaling -float 2
+fi
+
+if ask "Only use UTF-8 in Terminal.app" Y; then
+  defaults write com.apple.terminal StringEncodings -array 4
+fi
+
+if ask "Disable the Ping sidebar in iTunes" Y; then
+  defaults write com.apple.iTunes disablePingSidebar -bool true
+fi
+ 
+if ask "Disable all the other Ping stuff in iTunes" Y; then
+  defaults write com.apple.iTunes disablePing -bool true
+fi
+
+if ask "Disable the 'reopen windows when logging back in' option" Y; then
+  # This works, although the checkbox will still appear to be checked.
+  defaults write com.apple.loginwindow TALLogoutSavesState -bool false
+  defaults write com.apple.loginwindow LoginwindowLaunchesRelaunchApps -bool false
+fi
+
+if ask "Reset Launchpad" Y; then
+  find ~/Library/Application\ Support/Dock -name "*.db" -maxdepth 1 -delete
+fi
+ 
+if ask "Show the ~/Library folder" Y; then
+  chflags nohidden ~/Library
+fi
+
+
+
+# Time Machine
+if ask "Disable local Time Machine backups" N; then
+  hash tmutil &> /dev/null && sudo tmutil disablelocal
+fi
+
+if ask "Prevent Time Machine from prompting to use new hard drives as backup volume" Y; then
+  defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
+fi
+
+
+# Wrap it up
+
+if ask "Kill affected applications" Y; then
+  for app in Safari Finder Dock Mail SystemUIServer; do
+    killall "$app" >/dev/null 2>&1
+  done
+  echo
+  echo "** \033[33mSome changes needs a reboot to take effect\033[0m **"
+  echo
+fi
