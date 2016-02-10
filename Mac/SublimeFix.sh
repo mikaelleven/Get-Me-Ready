@@ -274,6 +274,27 @@ else
 fi
 
 
+# ###############################################################################
+# # Sublime Text
+# ###############################################################################
+# echo ""
+# echo "Do you use Sublime Text 3 as your editor of choice and is it installed?"
+# select yn in "Yes" "No"; do
+#   case $yn in
+#     Yes ) echo ""
+        echo "Linking Sublime Text command line"
+        ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
+        echo ""
+        echo "Setting Git to use Sublime Text as default editor"
+        git config --global core.editor "subl -n -w"
+        echo ""
+        # echo "Removing Mission Control as it interferes with Sublime Text keyboard shortcut for selecting multiple lines"
+        # defaults write com.apple.dock mcx-expose-disabled -bool TRUE
+#         break;;
+#     No ) break;;
+#   esac
+# done
+
 
 
 # # Move sublime settings
