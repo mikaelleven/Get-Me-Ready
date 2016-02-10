@@ -5,9 +5,12 @@ echo -ne "Installing development applications, please wait..."
 # General development tools:
 brew install wget
 #brew cask install --appdir="/Applications" github
-curl -s http://getmacapps.com/raw/jz6rl | sh # GitHub
+curl -s http://www.getmacapps.com/raw/jz6rl | sh # GitHub
 #brew cask install --appdir="/Applications" sourcetree
-curl -s http://getmacapps.com/raw/4zsox | sh # SourceTree
+curl -s http://www.getmacapps.com/raw/4zsox | sh # SourceTree
+
+
+
 
 # Optional tools:
 brew cask install --appdir="/Applications" atom
@@ -30,6 +33,18 @@ brew cask install --appdir="/Applications" xamarin-studio
 brew cask install vagrant
 #brew cask install --appdir="/Applications" vmware-fusion
 brew cask install virtualbox
+#>> OTTO
+#>> DOCKER
+
+
+### NODE SECTION ###
+
+# Developer tools, automation etc
+#npm install -g yo bower grunt-cli gulp # Yeoman
+
+#npm install -g generator-keystone # KeystoneJS CMS
+
+
 
 
 echo " done!"
