@@ -1,0 +1,3 @@
+%APPDATA%\Sublime Text 2\Settings\License.sublime_license
+
+??
