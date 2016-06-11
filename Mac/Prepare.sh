@@ -9,6 +9,8 @@ read -p "Press any key when ready... " -n1 -s
 echo  '\n'
 
 
+# El Capitan Hombrew fix
+sudo chown $(whoami):admin /usr/local && sudo chown -R $(whoami):admin /usr/local
 
 # Install Homebrew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"

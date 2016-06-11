@@ -138,7 +138,7 @@ defaults write com.apple.finder QLEnableTextSelection -bool true
  
 # echo ""
 # echo "Use column view in all Finder windows by default"
-# defaults write com.apple.finder FXPreferredViewStyle Clmv
+defaults write com.apple.finder FXPreferredViewStyle Clmv
  
 echo ""
 echo "Avoiding the creation of .DS_Store files on network volumes"
@@ -159,7 +159,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 # Wipe all (default) app icons from the Dock
 # This is only really useful when setting up a new Mac, or if you don't use
 # the Dock to launch apps.
-#defaults write com.apple.dock persistent-apps -array
+# defaults write com.apple.dock persistent-apps -array
  
 echo ""
 echo "Setting the icon size of Dock items to 36 pixels for optimal size/screen-realestate"
@@ -189,7 +189,7 @@ defaults write com.apple.dock "expose-group-by-app" -bool true
  
 # echo ""
 # echo "Enabling Safari's debug menu"
-# defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
  
 # echo ""
 # echo "Making Safari's search banners default to Contains instead of Starts With"
