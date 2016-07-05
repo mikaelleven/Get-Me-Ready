@@ -1,34 +1,61 @@
-choco install webpi
+ECHO "Installing developer tools..."
 
 
-choco install curl
+REM ### LANGUAGES / FRAMEWORKS ###
+REM choco install ruby
+REM choco install python
+REM  choco install python3
+REM choco install php
 
-choco install notepadplusplus
+REM NodeJS
+choco install nodejs.install
+choco install nodist
+::start "https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows"
 
 
-choco install ruby
-choco install python
-? choco install python3
-choco install nodejs
-X choco install nodejs.install
-? choco install npm
-choco install fiddler
-choco install fiddler4
+REM ### DATABASES / STORES / CACHE ###
 
-choco install SourceTree
-choco install githubforwindows
-choco install vagrant
-choco install dotPeek
+REM choco install rabbitmq
+REM choco install redis
+REM choco install redis-64
+REM choco install memcached
+
+REM Databases
 choco install mongodb
 choco install postgresql
-X choco install php
-choco install MsSqlServer2012Express
+
+REM SQLite
 choco install SQLite
-# choco install rabbitmq
-# choco install redis
-# choco install redis-64
+choco install sqliteadmin
+REM choco install sqlitebrowser
+
+REM SQL Server
+choco install mssql2014express-defaultinstance
+choco install mssqlservermanagementstudio2014express
+REM choco install sqlserverlocaldb
+REM choco install MsSqlServer2012Express
+
+
+REM ### DEVELOPER TOOLS ###
+
+choco install webpi
 choco install ilmerge
-choco install memcached
+REM choco install fiddler
+choco install fiddler4
+choco install dotPeek
+
+
+REM Git clients
+choco install sourcetree
+choco install github
+::choco install githubforwindows
+choco install gitkraken
+choco install kdiff3
+
+
+REM Cloud services
+::choco install awstools.powershell
+::choco install awscli
 
 
 >> choco install VisualStudio2013Ultimate

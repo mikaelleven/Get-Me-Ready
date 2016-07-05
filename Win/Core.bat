@@ -1,44 +1,43 @@
-# Cygwin - Shell
-choco install Cygwin
 
-# Console2 - Terminal
-choco install Console2
 
-# Command Promt Paste
-choco install wincommandpaste
+::choco install vcredist2010
 
-# Launchy launcher application
+::# Ninite - PowerPack??
+
+
+REM ### GENERAL TOOLS ###
+
+:: Launchy launcher application
 choco install launchy
 
-# f.lux
-choco install f.lux
+:: f.lux
+::choco install f.lux
 
+:: 7-Zip
+choco install 7zip
 
-# 7-Zip
-# 7Zip (already in Ninite)
-# choco install 7zip
-
-# Web Browsers
-choco install GoogleChrome-AllUsers
-? choco install GoogleChrome
+REM Web Browsers
+choco install googlechrome
+::choco install GoogleChrome-AllUsers
 choco install Firefox
 choco install safari
 choco install adblockplusie
-choco install adblockplusfirefox
+choco install adblockplus-firefox
 choco install adblockpluschrome
 
 
-# Media
+REM Media
 choco install spotify
 choco install vlc
-choco install cccp
+::choco install cccp
+::choco install handbrake.install
+
 
 
 # Other tools
 choco install lastpass
 choco install autohotkey_l
-? choco install autohotkey
-X choco install autohotkey.portable
+REM choco install autohotkey.portable
 choco install teamviewer
 choco install FoxitReader
 choco install filezilla
@@ -48,8 +47,11 @@ choco install paint.net
 choco install DotNet4.5
 
 
+choco install ccleaner
 
-# Sublime Text
-choco install SublimeText3
 
-choco install SublimeText3.PackageControl
+REM ### Zip & Compression ###
+choco install 7zip.install
+REM choco install peazip.install
+
+

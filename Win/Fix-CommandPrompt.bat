@@ -1,0 +1,2 @@
+
+DOSKEY ls=dir
