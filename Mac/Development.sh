@@ -41,9 +41,12 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | b
 # Virtualization
 brew cask install virtualbox
 brew cask install vagrant
+#?? vagrant init maier/alpine-3.3.1-x86_64 # Vagrant Alpine support
+vagrant plugin install vagrant-alpine
 #brew cask install --appdir="/Applications" vmware-fusion
 #>> OTTO
 #>> DOCKER
+#?? brew cask install arduino
 
 
 ### NODE SECTION ###
