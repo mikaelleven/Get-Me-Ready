@@ -44,6 +44,12 @@ REM choco install fiddler
 choco install fiddler4
 choco install dotPeek
 
+REM IDEs / Editors
+choco install visualstudiocode
+::choco install visualstudio2015enterprise
+::choco install visualstudio2015professional
+::choco install visualstudio2015community
+
 
 REM Git clients
 choco install sourcetree
@@ -56,6 +62,7 @@ choco install kdiff3
 REM Cloud services
 ::choco install awstools.powershell
 ::choco install awscli
+::choco install windowsazurepowershell
 
 
 >> choco install VisualStudio2013Ultimate

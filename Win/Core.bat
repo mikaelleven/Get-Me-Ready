@@ -1,8 +1,13 @@
-
+start https://ninite.com/
 
 ::choco install vcredist2010
 
 ::# Ninite - PowerPack??
+
+REM ### Core Applications / Utilities ###
+
+choco install silverlight
+::choco install flashplayerplugin
 
 
 REM ### GENERAL TOOLS ###
@@ -27,24 +32,24 @@ choco install adblockpluschrome
 
 
 REM Media
-choco install spotify
-choco install vlc
+::choco install spotify
+::choco install vlc
 ::choco install cccp
 ::choco install handbrake.install
 
 
 
-# Other tools
-choco install lastpass
+REM Other tools
+::choco install lastpass
 choco install autohotkey_l
 REM choco install autohotkey.portable
-choco install teamviewer
-choco install FoxitReader
-choco install filezilla
-choco install flashplayerplugin
-choco install paint.net
+::choco install teamviewer
+::choco install FoxitReader
+::choco install filezilla
 
-choco install DotNet4.5
+::choco install paint.net
+
+::choco install DotNet4.5
 
 
 choco install ccleaner

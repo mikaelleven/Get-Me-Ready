@@ -5,7 +5,21 @@ REM Install Chocolatey (Package Manager)
 choco install chocolateygui
 
 REM Core applications
-:: Core.bat
+CALL Core.bat
+
+REM Developer tools
+::CALL Developer.bat
+
+REM Productivity tools
+::CALL Productivity.bat
+
+REM PowerTools
+::CALL PowerTools.bat
+
+REM Additional fixes
+::CALL Fix-CommandPrompt.bat
+
+
 
 
 
