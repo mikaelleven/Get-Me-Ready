@@ -2,9 +2,37 @@
 
 clear
 echo "==============================================="
-echo "GetMeReady (mac) v1.0 - Created by Mikael Levén"
+echo "GetMeReady (Mac) v1.1 - Created by Mikael Levén"
 echo "==============================================="
 echo 
+
+echo "First of all this script will install -Homebrew-."
+echo
+
+echo "Then following packages will be installed:"
+echo "* Core (basic tools such as XtraFinder, Alfred, Hyperdock, Flux etc)"
+echo "* Productivity (general productivity tools such as Evernote, Dropbox, Wunderlist, Slack etc)"
+echo "* Development (developer specific tools such as WGet, Git, VirtualBox, MongoDB, NodeJS, Heroku Toolbelt)"
+echo "* Core (XtraFinder, Alfred, Hyperdock, Flux)"
+echo
+
+echo "Finally some tweaks will be made:"
+echo "* HotCorners (screensave/put screen to sleep)"
+echo "* SublimeFix (Package Control, Themes, Command Line Tool, Custom Settings, copy license etc)"
+echo "* Various general tweaks (Always show scrollbars, Finder-tweaks, DS_Store-fix etc)"
+echo
+
+read -p "Press any key to continue (or Ctrl + Z to abort)... " -n1 -s
+echo  '\n'
+
+
+clear
+echo "==============================================="
+echo "GetMeReady (mac) v1.1 - Created by Mikael Levén"
+echo "==============================================="
+echo 
+
+
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	
