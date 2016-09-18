@@ -34,13 +34,16 @@ brew cask alfred link
 #brew cask install flux
 #curl -s http://www.getmacapps.com/raw/13ydj5 | sh # f.lux
 
+# Avast Antivirus & Security
+brew cask install avast
+
 # Hyperdock
 brew cask install hyperdock
 #brew cask install --appdir="/Applications" hyperdock
 #brew cask install bettertouchtool
 
 # (optional) White clock (if you prefer dark theme)
-#brew cask install whiteclock
+#OLD: brew cask install whiteclock
 
 # Other system tools
 #brew cask install iterm2
