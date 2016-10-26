@@ -13,6 +13,9 @@ choco install nodist
 ::start "https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows"
 
 
+REM ### APPLICATION FRAMEWORKS	###
+choco install electron
+
 REM ### DATABASES / STORES / CACHE ###
 
 REM choco install rabbitmq
