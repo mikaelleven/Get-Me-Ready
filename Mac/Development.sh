@@ -2,6 +2,10 @@
 
 echo -ne "Installing development applications, please wait..."
 
+# Prepare script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+
 # General development tools:
 brew install wget
 #? brew install git
@@ -12,22 +16,24 @@ brew install wget
 #brew cask install --appdir="/Applications" sourcetree
 #curl -s http://www.getmacapps.com/raw/4zsox | sh # SourceTree
 
+# NodeJS
+source "$DIR/InstallNode.sh"
+
 # Frameworks
-#brew cask install node
 #brew cask install mono-mdk
 #brew cask install python
 #brew cask install python3
 #??brew cask install 
 
-# Install Node Version Manager (NodeJS)
-touch ~/.profile # Prepare NVM
-touch ~/.bash_profile # Prepare NVM
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.3/install.sh | bash # Node Version Manager (NVM)
-#::brew install nvm ## DOES NOT REALLY WORK
+
+# Application/cross-platform Frameworks
+brew cask install electron
+#?   nativescript??
 
 
 # IDE's and development editors
-#brew cask install --appdir="/Applications" atom
+#brew cask install atom
+#? apm install nuclide
 #brew cask install --appdir="/Applications" pycharm
 #brew cask install --appdir="/Applications" xamarin-studio
 #?? brew cask install arduino
