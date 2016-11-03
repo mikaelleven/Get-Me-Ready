@@ -32,7 +32,31 @@ npm -g install typescript
 
 # Application/cross-platform Frameworks
 brew cask install electron
-#?   nativescript??
+
+
+### Xamarin ###
+brew cask install xamarin-jdk
+brew cask install xamarin-android
+brew cask install xamarin-android-player
+brew cask install xamarin-ios
+brew cask install xamarin-studio
+
+
+### NativeScript ###
+
+# iOS / XCode pre-req
+sudo gem install xcodeproj
+sudo gem install cocoapods
+
+# Android / Java pre-req
+brew cask install java
+echo "export JAVA_HOME=\$(/usr/libexec/java_home)" >> ~/.bash_profile
+brew install android-sdk
+echo "export ANDROID_HOME=/usr/local/opt/android-sdk" >> ~/.bash_profile
+android update sdk --filter tools,platform-tools,android-23,build-tools-23.0.3,extra-android-m2repository,extra-google-m2repository,extra-android-support --all --no-ui
+
+# Install NativeScript
+npm -g install nativescript
 
 
 # IDE's and development editors
