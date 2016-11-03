@@ -98,3 +98,8 @@ brew cask install --appdir="~/Applications" teamviewer
 #open -a Firefox 'https://adblockplus.org/en/firefox'
 #open -a 'Google Chrome' 'https://adblockplus.org/en/chrome'
 #open -a Safari 'https://adblockplus.org/en/safari'
+
+
+# Script & aliases
+echo "alias flushdns='dscacheutil -flushcache && sudo killall -HUP mDNSResponder'" >> ~/.bash_profile
+echo "alias brew-update='brew update && brew upgrade && brew cu && brew cleanup'" >> ~/.bash_profile
