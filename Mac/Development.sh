@@ -19,6 +19,10 @@ brew install wget
 # NodeJS
 source "$DIR/InstallNode.sh"
 
+# NodeJS Components
+npm -g install typescript
+
+
 # Frameworks
 #brew cask install mono-mdk
 #brew cask install python
