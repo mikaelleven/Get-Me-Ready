@@ -20,12 +20,16 @@ brew update
 brew tap phinze/homebrew-cask
 brew install brew-cask
 
-
 # Install Cask
 #brew install caskroom/cask/brew-cask
 
 # Prepare Homebrew Cask
 brew cask
+
+# Install Cask Upgrade ($ brew cu)
+brew tap buo/cask-upgrade
+
+
 
 
 
