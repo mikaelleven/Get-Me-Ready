@@ -68,6 +68,16 @@ npm -g install nativescript
 
 # Additional tools
 #??brew install heroku
+### .NET / Visual Studio for Mac ###
+curl -s https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/Mac/GetMyApps/GMA_VisualStudio-Mac-Preview.sh | sh # Install 
+brew install openssl
+mkdir -p /usr/local/lib
+ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
+ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
+#TODO: script to download & instal .NET Core https://www.microsoft.com/net/download/core#/sdk  https://go.microsoft.com/fwlink/?LinkID=835011
+npm install -g generator-aspnet
+npm install -g generator-aspnetcore
+npm install -g generator-aspnetcore-angular2
 
 
 
