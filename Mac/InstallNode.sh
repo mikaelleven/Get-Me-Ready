@@ -22,3 +22,5 @@ nvm install --lts
 echo.
 echo "NodeJS installed!"
 
+
+
