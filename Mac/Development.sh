@@ -10,11 +10,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 brew install wget
 
 
-# NodeJS
-source "$DIR/InstallNode.sh"
-
-# NodeJS Components
-npm -g install typescript
+### Git & source control ###
+brew install git
+brew install git-flow
+brew cask install gitkraken
+brew cask install github ##curl -s http://www.getmacapps.com/raw/jz6rl | sh # GitHub
+brew cask install sourcetree ##curl -s http://www.getmacapps.com/raw/4zsox | sh # SourceTree
 
 
 ### Frameworks ###
@@ -23,8 +24,27 @@ brew cask install python
 brew cask install python3
 
 
-# Application/cross-platform Frameworks
+### NodeJS ###
+source "$DIR/InstallNode.sh"
+npm install -g bower
+npm install -g grunt-cli gulp
+npm install -g yo
+npm install -g generator-ng-fullstack
+npm install -g generator-keystone
+
+
+### TypeScript ###
+npm install -g typescript
+npm install -g typings
+typings install dt~node --global --save
+typings install dt~express dt~serve-static dt~express-serve-static-core --global --save
+typings install dt~elasticsearch --global --save
+
+
+### Application/cross-platform Frameworks ###
 brew cask install electron
+npm install --global yo generator-electron
+typings install dt~electron --global --save
 
 
 ### Xamarin ###
