@@ -1,3 +1,8 @@
+
+::choco install DotNet4.5
+choco install webpi
+
+
 ECHO "Installing developer tools..."
 
 
