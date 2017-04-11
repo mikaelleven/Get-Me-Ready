@@ -1,6 +1,9 @@
 ECHO "Installing power tools..."
 
 
+REM ### Common Utilities ###
+choco install sdelete
+
 REM ### CONSOLE FIXES ###
 
 REM Cygwin - Shell
@@ -42,6 +45,7 @@ choco install gpu-z
 choco install ccenhancer 
 ::choco install Everything
 ::choco install powershell
+choco install partitionwizard
 
 REM Virtualization
 choco install virtualbox
