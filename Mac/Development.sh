@@ -80,6 +80,8 @@ npm install -g generator-aspnetcore
 npm install -g generator-aspnetcore-angular2
 
 
+### Visual Studio Code
+source "$DIR/GetMyApps/GMA_VisualStudioCode.sh"
 
 
 
