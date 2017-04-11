@@ -5,12 +5,12 @@ echo
 
 # Note: We always honour Apple Store apps..
 
-# AppCleaner
-#brew cask install appcleaner
 
-# Disk Cleaner X
-#brew cask install disk-inventory-x
-
+# System tools
+brew cask install appcleaner
+brew cask install smcfancontrol
+brew cask install disk-inventory-x
+brew cask install fluid
 
 # Misc tools
 brew cask install etcher
