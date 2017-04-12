@@ -124,11 +124,11 @@ function installPackageControl ()
 function copySettings ()
 {	
 	# Copy license
-	if [ -e "$DIR/../Common/License.sublime_license" ] 
+	if [ -e "$DIR/../Shared/License.sublime_license" ] 
 	then
 		if [ ! -e "$sublimeDir/Local/License.sublime_license" ] 
 		then		
-			cp -R "$DIR/../Common/License.sublime_license" "$sublimeDir/Local"
+			cp -R "$DIR/../Shared/License.sublime_license" "$sublimeDir/Local"
 			echo "Sublime Text license found"
 		else
 			echo "License found but was already installed"
@@ -136,36 +136,36 @@ function copySettings ()
 	fi
 
 	# Copy Sync settings
-	if [ -e "$DIR/../Common/Package Syncing.sublime-settings" ] 
+	if [ -e "$DIR/../Shared/Package Syncing.sublime-settings" ] 
 	then
 		if [ ! -e "$sublimePackagesDir/User/Package Syncing.sublime-settings" ] 
 		then		
 			echo "Sublime Text Package Sync settings found"
-			cp -R "$DIR/../Common/Package Syncing.sublime-settings" "$sublimePackagesDir/User"
+			cp -R "$DIR/../Shared/Package Syncing.sublime-settings" "$sublimePackagesDir/User"
 		else
 			echo "License found but was already installed"
 		fi
 	fi
 
 	# Copy Package Control settings
-	if [ -e "$DIR/../Common/Package Control.sublime-settings" ] 
+	if [ -e "$DIR/../Shared/Package Control.sublime-settings" ] 
 	then
 		if [ ! -e "$sublimePackagesDir/User/Package Control.sublime-settings" ] 
 		then		
 			echo "Sublime Text Package Control settings found"
-			cp -R "$DIR/../Common/Package Control.sublime-settings" "$sublimePackagesDir/User"
+			cp -R "$DIR/../Shared/Package Control.sublime-settings" "$sublimePackagesDir/User"
 		else
 			echo "Package Control settings found but was already installed"
 		fi
 	fi
 
 	# Copy Preferences
-	if [ -e "$DIR/../Common/Preferences.sublime-settings" ] 
+	if [ -e "$DIR/../Shared/Preferences.sublime-settings" ] 
 	then
 		if [ ! -e "$sublimePackagesDir/User/Preferences.sublime-settings" ] 
 		then		
 			echo "Sublime Text Preferences found"
-			cp -R "$DIR/../Common/Preferences.sublime-settings" "$sublimePackagesDir/User"
+			cp -R "$DIR/../Shared/Preferences.sublime-settings" "$sublimePackagesDir/User"
 		else
 			echo "Preferences found but was already installed"
 		fi
@@ -217,12 +217,12 @@ function installAtomDark ()
 	fi
 
 	# Install custom version of Atom Dark
-	if [ -e "$DIR/../Common/Sublime Atom Dark ML.tmTheme" ] 
+	if [ -e "$DIR/../Shared/Sublime Atom Dark ML.tmTheme" ] 
 	then
 		if [ ! -e "$sublimePackagesDir/User/Sublime Atom Dark ML.tmTheme" ]
 		then		
 			echo "Custom Atom Dark colour scheme found"
-			cp -R "$DIR/../Common/Sublime Atom Dark ML.tmTheme" "$sublimePackagesDir/User"
+			cp -R "$DIR/../Shared/Sublime Atom Dark ML.tmTheme" "$sublimePackagesDir/User"
 		else
 			echo "Custom Atom Dark colour scheme found but was already installed"
 		fi
