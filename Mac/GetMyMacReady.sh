@@ -2,7 +2,7 @@
 
 clear
 echo "==============================================="
-echo "GetMeReady (Mac) v1.1 - Created by Mikael Levén"
+echo "GetMeReady (Mac) v1.2 - Created by Mikael Levén"
 echo "==============================================="
 echo 
 
@@ -10,15 +10,16 @@ echo "First of all this script will install -Homebrew-."
 echo
 
 echo "Then following packages will be installed:"
-echo "* Core (basic tools such as XtraFinder, Alfred, Hyperdock, Flux etc)"
+echo "* Common (basic tools such as XtraFinder, Alfred, Hyperdock, Flux etc)"
 echo "* Productivity (general productivity tools such as Evernote, Dropbox, Wunderlist, Slack etc)"
-echo "* Development (developer specific tools such as WGet, Git, VirtualBox, MongoDB, NodeJS, Heroku Toolbelt)"
-echo "* Core (XtraFinder, Alfred, Hyperdock, Flux)"
+echo "* Development (developer specific tools such as Visual Studio, Git, VirtualBox, MongoDB, NodeJS, Heroku Toolbelt etc)"
+echo "* Power Tools (Etcher, FreeFileSync, disk tools etc)"
 echo
 
 echo "Finally some tweaks will be made:"
 echo "* HotCorners (screensave/put screen to sleep)"
 echo "* SublimeFix (Package Control, Themes, Command Line Tool, Custom Settings, copy license etc)"
+echo "* Add terminal aliases (flushdns, brew-update etc)"
 echo "* Various general tweaks (Always show scrollbars, Finder-tweaks, DS_Store-fix etc)"
 echo
 
@@ -28,10 +29,9 @@ echo  '\n'
 
 clear
 echo "==============================================="
-echo "GetMeReady (mac) v1.1 - Created by Mikael Levén"
+echo "GetMeReady (Mac) v1.2 - Created by Mikael Levén"
 echo "==============================================="
 echo 
-
 
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -45,9 +45,13 @@ echo "Some suggestions:"
 echo "Microsoft Remote Desktop"
 echo "iWorks"
 echo "Slack"
-echo "Hamster Archiver"	
-echo "iZip Viewer"
+echo "Dr. Unarchiver & Dr. Cleaner"	
+echo "Evernote"
 echo "Wünderlist"
+
+#
+#TODO: add option to go to URL with links to App Store apps
+#
 
 # no solution to automate AppStore installs
 echo
@@ -67,26 +71,18 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-
 # Prepare the computer
 source "$DIR/Prepare.sh"
 
-# Install core applications
-source "$DIR/Core.sh"
 
-# Install productivity applications
-source "$DIR/Productivity.sh"
+### INSTALL PACKAGES ###
 
-# Install development applications
-source "$DIR/Development.sh"
-
-# Install nice-to-have applications
-#source "$DIR/NiceToHave.sh"
-
-# cleanup
-brew cleanup --force
-rm -f -r /Library/Caches/Homebrew/*
 source "$DIR/Common.sh" # Install common applications
+source "$DIR/Productivity.sh" # Install productivity applications
+source "$DIR/Powertools.sh" # Install power tools
+source "$DIR/Development.sh" # Install development tools
+#source "$DIR/NiceToHave.sh" # Install nice-to-have applications
+#source "$DIR/Personal.sh" # Install personal applications
 
 # Performs some tweaks
 source "$DIR/HotCorners.sh" # Hot corners fix
@@ -94,11 +90,19 @@ source "$DIR/Tweaks.sh" # Generals OS tweaks
 source "$DIR/SublimeFix.sh" # Run special commands for Sublime Text
 
 
-# Fix other scripts that might be run individually later
-chmod +x "$DIR/Core.sh"
+### PERFORM CLEANUP & FINALIZE ###
+
+# cleanup
+brew cleanup --force
+rm -f -r /Library/Caches/Homebrew/*
+
+# Fix other scripts that might be executed individually later
 chmod +x "$DIR/Common.sh"
 chmod +x "$DIR/Productivity.sh"
+chmod +x "$DIR/Powertools.sh"
 chmod +x "$DIR/Development.sh"
+#chmod +x "$DIR/NiceToHave.sh"
+#chmod +x "$DIR/Personal.sh"
 chmod +x "$DIR/SublimeFix.sh"
 chmod +x "$DIR/HotCorners.sh"
 chmod +x "$DIR/Tweaks.sh"
