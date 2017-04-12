@@ -86,6 +86,7 @@ source "$DIR/Development.sh"
 # cleanup
 brew cleanup --force
 rm -f -r /Library/Caches/Homebrew/*
+source "$DIR/Common.sh" # Install common applications
 
 # Performs some tweaks
 source "$DIR/HotCorners.sh" # Hot corners fix
@@ -95,6 +96,7 @@ source "$DIR/SublimeFix.sh" # Run special commands for Sublime Text
 
 # Fix other scripts that might be run individually later
 chmod +x "$DIR/Core.sh"
+chmod +x "$DIR/Common.sh"
 chmod +x "$DIR/Productivity.sh"
 chmod +x "$DIR/Development.sh"
 chmod +x "$DIR/SublimeFix.sh"
