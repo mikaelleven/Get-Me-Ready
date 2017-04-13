@@ -143,7 +143,7 @@ function copySettings ()
 			echo "Sublime Text Package Sync settings found"
 			cp -R "$DIR/../Shared/Package Syncing.sublime-settings" "$sublimePackagesDir/User"
 		else
-			echo "License found but was already installed"
+			echo "Package Sync Settings found but was already installed"
 		fi
 	fi
 
