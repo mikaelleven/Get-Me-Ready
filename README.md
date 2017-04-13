@@ -29,23 +29,23 @@ Read more about _"GMR for Windows"_:
 > TBD
  
 **Get My Mac Ready (GMMR)**
-Read more about _"GMR for Mac"_ - __
+Read more about _"GMR for Mac"_:
 > http://goo.gl/v8AiaA
 
-# How does it work (a bit technical)
+# How does it work
 Basically GMR is a script relying on core OS functionality of batch processing (Bash/Batch) and a package manager (https://goo.gl/RZHZlg). On Windows the batch processing is managed by Batch (aka "Command Prompt") and the package manager is Chocolately. On Mac the batch processing is managed by Bash (similar as in Unix/linux) and the package manager is Homebrew.
 
 The GMR script for each platform is actually a collection of multiple scripts following this basic structure:
 - _GetMyPCReady / GetMyMacReady:_ The base script responsible for the installation of the package manager and execution of the other scripts
 - _Common:_ Basic tools typically relevant for most users (i.e. antivirus, Sublime Text, f.lux, web browsers, Spotify etc)
-- _Productivity:_ Useful tools for typical users (i.e Dropbox, LastPass, Evernote, Office etc) users  
+- _Productivity:_ Useful tools for typical users (i.e Dropbox, LastPass, Evernote, Office etc)  
 - _Powertools:_ More advanced tools for power users (i.e. disk tools, file sync etc)
 - _Development:_ Tools specifically aimed at developers (i.e. Git, Visual Studio, NodeJS, Electron) 
 
 ## Only interested in parts of GMR?
 No problem! You can easily select which package(s) you want to include. And thanks to the nature of scripting it is easy to both exclude specific applications and tweaks as well as it is easy to add your own applications to your script.
 
-You can even totally skip the installation script and simply *use GMR as a guide for recommended applications* for you to install manually, this is totally up to you!
+You can even totally skip the installation script and simply **use GMR as a guide for recommended applications** for you to install manually, this is totally up to you!
 
 *Customize the installation*
 In the base script (_GetMyPCReady.bat_ on Windows and _GetMyMacReady.sh_ on macOS) you will find a section where the other scripts is executed. Review the example below where the first four scripts will be executed and the last two is commented out with the hash symbol ("#") and will not be included.
