@@ -87,7 +87,3 @@ open -a Safari 'https://adblockplus.org/en/safari'
 open -a "Google Chrome" https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm
 
 
-# Script & aliases
-echo "alias flushdns='dscacheutil -flushcache && sudo killall -HUP mDNSResponder'" >> ~/.bash_profile
-echo "alias brew-update='brew update && brew upgrade && brew cu && brew cleanup'" >> ~/.bash_profile
-echo "alias cd..='cd ..'" >> ~/.bash_profile

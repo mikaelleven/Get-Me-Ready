@@ -87,6 +87,7 @@ source "$DIR/Development.sh" # Install development tools
 # Performs some tweaks
 source "$DIR/HotCorners.sh" # Hot corners fix
 source "$DIR/Tweaks.sh" # Generals OS tweaks
+source "$DIR/BashTweaks.sh" # Generals OS tweaks
 source "$DIR/SublimeFix.sh" # Run special commands for Sublime Text
 
 
@@ -106,6 +107,7 @@ chmod +x "$DIR/Development.sh"
 chmod +x "$DIR/SublimeFix.sh"
 chmod +x "$DIR/HotCorners.sh"
 chmod +x "$DIR/Tweaks.sh"
+chmod +x "$DIR/BashTweaks.sh"
 
 
 echo 
