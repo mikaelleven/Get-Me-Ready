@@ -1,20 +1,22 @@
 #!/bin/bash
 
-# Create and open a temporary folder
-mkdir -p ~/.gmmr/temp
-cd ~/.gmmr/temp
+# # Create and open a temporary folder
+# mkdir -p ~/.gmmr/temp
+# cd ~/.gmmr/temp
 
-# Download Visual Studio for Mac preview from Microsoft
-curl -L -o ~/.gmmr/temp/VisualStudioCode.zip "https://go.microsoft.com/fwlink/?LinkID=620882"
+# # Download Visual Studio for Mac preview from Microsoft
+# curl -L -o ~/.gmmr/temp/VisualStudioCode.zip "https://go.microsoft.com/fwlink/?LinkID=620882"
 
-# Uncompress the downloaded archive
-unzip ~/.gmmr/temp/VisualStudioCode.zip
+# # Uncompress the downloaded archive
+# unzip ~/.gmmr/temp/VisualStudioCode.zip
 
-# Move the unzipped application to the applications folder
-mv "Visual Studio Code.app" /Applications
+# # Move the unzipped application to the applications folder
+# mv "Visual Studio Code.app" /Applications
 
-# Remove the temporary zip archive
-rm ~/.gmmr/temp/VisualStudioCode.zip
+# # Remove the temporary zip archive
+# rm ~/.gmmr/temp/VisualStudioCode.zip
+
+brew cask install visual-studio-code
 
 # Fix symbolic link for "code" command (manual install: https://code.visualstudio.com/docs/setup/mac)
 # Note: this is required for automatic installation of extensions

@@ -33,9 +33,6 @@ brew cask alfred link
 # f.lux
 brew cask install flux ##curl -s http://www.getmacapps.com/raw/13ydj5 | sh # f.lux
 
-# Avast Antivirus & Security
-brew cask install avast
-
 # Hyperdock
 brew cask install hyperdock
 #brew cask install bettertouchtool
@@ -47,9 +44,8 @@ brew cask install hyperdock
 brew cask install iterm2 ##curl -s http://www.getmacapps.com/raw/18y69 | sh # iterm2
 #brew cask install caffeine ##curl -s http://www.getmacapps.com/raw/5m9t | sh # Caffeine
 #brew cask install karabiner
-brew cask install the-unarchiver # The Unarchiver
+#brew cask install the-unarchiver # The Unarchiver
 brew cask install itsycal # Itsycal
-
 
 # Web browsers
 brew cask install google-chrome ##curl -s http://www.getmacapps.com/raw/3 | sh # Chrome
@@ -57,7 +53,6 @@ brew cask install firefox ##curl -s http://www.getmacapps.com/raw/9 | sh # FireF
 #brew cask install opera-next
 
 # General purpose applications
-
 brew cask install flash
 brew cask install java
 brew cask install teamviewer
@@ -81,9 +76,15 @@ open /Applications/Dropbox.app
 open /Applications/XtraFinder.app
 
 # AdBlock / uBlock Origin
-open -a Firefox 'https://adblockplus.org/en/firefox'
-open -a Safari 'https://adblockplus.org/en/safari'
-#open -a 'Google Chrome' 'https://adblockplus.org/en/chrome'
-open -a "Google Chrome" https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm
+#open -a Firefox 'https://adblockplus.org/en/firefox' # AdBlock Firefox
+open -a Firefox 'https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/' # uBlock Firefox
+open -a Safari 'https://adblockplus.org/en/safari' # AdBlock Firefox
+#open -a Safari 'https://github.com/el1t/uBlock-Safari/releases' # uBlock Safari
+#open -a 'Google Chrome' 'https://adblockplus.org/en/chrome' # AdBlock Chrome
+open -a "Google Chrome" https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm # uBlock Chrome
+
+# Avast Antivirus & Security
+#brew cask install avast
+open https://cloud.sophos.com/manage/home/dashboard
 
 

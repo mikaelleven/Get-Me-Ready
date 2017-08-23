@@ -57,9 +57,12 @@ defaults write com.apple.mouse.tapBehaviour -int 1
 ###############################################################################
 
 # echo ""
-# echo "Disable annoying backswipe in Chrome"
+# echo "Disable annoying backswipe with Trackpad in Chrome"
 # defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
 
+# echo ""
+# echo "Disable annoying backswipe with Mouse in Chrome"
+# defaults write com.google.Chrome AppleEnableMouseSwipeNavigateWithScrolls -bool false
 
 
 ###############################################################################
@@ -75,14 +78,19 @@ defaults write com.apple.mouse.tapBehaviour -int 1
 # echo "Setting screenshot format to PNG"
 # defaults write com.apple.screencapture type -string "png"
 
-# echo ""
-# echo "Enabling subpixel font rendering on non-Apple LCDs"
-# defaults write NSGlobalDomain AppleFontSmoothing -int 2
+echo ""
+echo "Setting screenshot location to {HOME_FOLDER}/Screenshots"
+defaults write com.apple.screencapture location ~/Screenshots
+
+echo ""
+echo "Enabling subpixel font rendering on non-Apple LCDs"
+defaults write NSGlobalDomain AppleFontSmoothing -int 2
  
-# echo ""
-# echo "Enabling HiDPI display modes (requires restart)"
-# sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
+echo ""
+echo "Enabling HiDPI display modes (requires restart)"
+sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
  
+
 
 
 
@@ -138,7 +146,7 @@ defaults write com.apple.finder QLEnableTextSelection -bool true
  
 # echo ""
 # echo "Use column view in all Finder windows by default"
-defaults write com.apple.finder FXPreferredViewStyle Clmv
+# defaults write com.apple.finder FXPreferredViewStyle Clmv
  
 echo ""
 echo "Avoiding the creation of .DS_Store files on network volumes"
@@ -187,8 +195,8 @@ defaults write com.apple.dock "expose-group-by-app" -bool true
 # echo "Disabling Safari's thumbnail cache for History and Top Sites"
 # defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
  
-# echo ""
-# echo "Enabling Safari's debug menu"
+echo ""
+echo "Enabling Safari's debug menu"
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
  
 # echo ""

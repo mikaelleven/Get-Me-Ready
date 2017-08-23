@@ -17,7 +17,8 @@ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/
 
 brew doctor
 brew update
-brew tap phinze/homebrew-cask
+#brew tap phinze/homebrew-cask
+brew tap caskroom/cask
 brew install brew-cask
 
 # Prepare Homebrew Cask

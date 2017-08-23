@@ -76,7 +76,6 @@ source "$DIR/Prepare.sh"
 
 
 ### INSTALL PACKAGES ###
-
 source "$DIR/Common.sh" # Install common applications
 source "$DIR/Productivity.sh" # Install productivity applications
 source "$DIR/Powertools.sh" # Install power tools
@@ -98,12 +97,14 @@ brew cleanup --force
 rm -f -r /Library/Caches/Homebrew/*
 
 # Fix other scripts that might be executed individually later
+touch "$DIR/NiceToHave.sh"
+touch "$DIR/Personal.sh"
 chmod +x "$DIR/Common.sh"
 chmod +x "$DIR/Productivity.sh"
 chmod +x "$DIR/Powertools.sh"
 chmod +x "$DIR/Development.sh"
-#chmod +x "$DIR/NiceToHave.sh"
-#chmod +x "$DIR/Personal.sh"
+chmod +x "$DIR/NiceToHave.sh"
+chmod +x "$DIR/Personal.sh"
 chmod +x "$DIR/SublimeFix.sh"
 chmod +x "$DIR/HotCorners.sh"
 chmod +x "$DIR/Tweaks.sh"

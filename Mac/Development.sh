@@ -74,11 +74,6 @@ npm -g install nativescript
 
 ### .NET / Visual Studio for Mac ###
 curl -s https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/Mac/GetMyApps/GMA_VisualStudio-Mac-Preview.sh | sh # Install 
-brew install openssl
-mkdir -p /usr/local/lib
-ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
-ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
-#TODO: script to download & instal .NET Core https://www.microsoft.com/net/download/core#/sdk  https://go.microsoft.com/fwlink/?LinkID=835011
 npm install -g generator-aspnet
 npm install -g generator-aspnetcore
 npm install -g generator-aspnetcore-angular2
@@ -92,10 +87,6 @@ source "$DIR/GetMyApps/GMA_VisualStudioCode.sh"
 brew cask install atom
 apm install nuclide
 brew cask install pycharm
-
-
-### Hardware development ###
-brew cask install arduino
 
 
 ### Cloud tools ###
@@ -114,7 +105,7 @@ brew install elasticsearch
 ### Virtualization ###
 brew cask install virtualbox
 brew cask install vmware-fusion
-brew cask install parallels-desktop
+#brew cask install parallels-desktop
 brew cask install vagrant
 vagrant plugin install vagrant-alpine # >> vagrant init maier/alpine-3.3.1-x86_64
 vagrant plugin install vagrant-proxmox
@@ -125,8 +116,8 @@ brew cask install kitematic
 #brew cask install otto
 
 
-# Arduino / hardware development
-brew cask arduino
+### Arduino / hardware development ###
+brew cask install arduino
 open 'https://tzapu.com/making-ch340-ch341-serial-adapters-work-under-el-capitan-os-x/' # CH340 fix for Mac OS X
 
 
