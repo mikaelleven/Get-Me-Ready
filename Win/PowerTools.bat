@@ -1,55 +1,63 @@
 ECHO "Installing power tools..."
 
 
-REM ### Common Utilities ###
-choco install sdelete
+
+REM ### MISC TOOLS ###
+cinst curl
+cinst openssh
+::cinst MobaXTerm 
+cinst putty
+::cinst superputty
+
+
 
 REM ### CONSOLE FIXES ###
+cinst clink
 
-REM Cygwin - Shell
-choco install Cygwin
+cinst Cygwin
 
-REM Console2 - Terminal
-REM choco install Console2
+::cinst Console2
+cinst cmder
+::cinst consolez
+::cinst babun
 
-REM Cmder
-choco install cmder
-
-REM ConsoleZ
-choco install consolez
-
-REM Command Promt Paste
-choco install wincommandpaste
+::cinst wincommandpaste
 
 
-REM ### Console Tools ###
-
-REM cURL
-choco install curl
-
-
-
-REM ### Disk utilities / USB & Flash drive tools ###
-:: choco install win32diskimager.install
-:: choco install rufus.install
-:: choco install universal-usb-installer
-start http://www.etcher.io/
+REM ### DISK & DRIVE UTILITIES ###
+:: cinst win32diskimager.install
+:: cinst rufus.install
+:: cinst universal-usb-installer
+cinst etcher
+cinst freefilesync
+cinst windirstat
+cinst partitionwizard
+cinst sdelete
+:: cinst lockhunter REM LockHunter is a foolproof file unlocker
 
 
 REM ### General Tools ###
-choco install windirstat
-choco install sysinternals
-choco install cpu-z
-choco install gpu-z
-:: choco install lockhunter REM LockHunter is a foolproof file unlocker
-choco install ccenhancer 
-::choco install Everything
-::choco install powershell
-choco install partitionwizard
+cinst sysinternals
+cinst cpu-z
+cinst gpu-z
+::cinst ccleaner
+::cinst ccenhancer 
+::cinst recuva
+::cinst Everything
+::cinst powershell
+
 
 REM Virtualization
-choco install virtualbox
-choco install vmwareplayer
-choco install vagrant
+cinst virtualbox
+cinst vmwareplayer
+cinst vagrant
 
+
+
+
+REM ### DO SOME INITIALIZATIONS ###
+refreshenv
+cmder.exe /register user
+
+start http://projects.reficio.org/babun/download
 
