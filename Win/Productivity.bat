@@ -1,23 +1,22 @@
 
 
-:: ### Cloud tools ###
-choco install dropbox
-choco install googledrive
+REM ### Cloud tools ###
+cinst dropbox
+cinst googledrive
+cinst onedrive
 
-:: ### Communication ###
-choco install slack
-choco install skype
+REM ### Communication ###
+cinst slack
+cinst skype
+start http://meetfranz.com/#download
 
-
-:: ### Text editors and notepads ###
-choco install evernote
-choco install notepadplusplus
-
-:: Sublime Text
-choco install SublimeText3
-choco install SublimeText3.PackageControl
-
+REM ### TEXT EDITORS & NOTE TOOLS ###
+cinst evernote
+cinst SublimeText3
+cinst SublimeText3.PackageControl
+::cinst notepadplusplus
 
 REM Other tools
-::choco install uTorrent
+::cinst uTorrent
+
 
