@@ -1,62 +1,56 @@
-start https://ninite.com/
 
-::choco install vcredist2010
 
 ::# Ninite - PowerPack??
 
 REM ### Core Applications / Utilities ###
 
-choco install silverlight
-::choco install flashplayerplugin
+::cinst silverlight
+::cinst flashplayerplugin
+
+
+REM ### SYSTEM TOOLS ###
+
+:: Launchy launcher application
+::cinst launchy
+cinst hain
+cinst f.lux
+
+
+REM Web Browsers
+cinst googlechrome
+::cinst GoogleChrome-AllUsers
+cinst Firefox
+cinst safari
+cinst adblockplusie
+cinst adblockplus-firefox
+::cinst adblockpluschrome REM Replaced by uBlock (at the bottom)
+
+
+REM ### MEDIA ###
+cinst spotify
+cinst vlc
+cinst cccp
+::cinst handbrake.install
+
+
+REM ### MISC TOOLS ###
+cinst lastpass
+cinst autohotkey
+cinst teamviewer
+cinst FoxitReader
+cinst filezilla
+
+
+REM ### GRAPHICAL TOOLS ###
+cinst gimp
+cinst paint.net
 
 
 REM ### GENERAL TOOLS ###
-
-:: Launchy launcher application
-choco install launchy
-
-:: f.lux
-::choco install f.lux
-
-:: 7-Zip
-choco install 7zip
-
-REM Web Browsers
-choco install googlechrome
-::choco install GoogleChrome-AllUsers
-choco install Firefox
-choco install safari
-choco install adblockplusie
-choco install adblockplus-firefox
-choco install adblockpluschrome
-
-
-REM Media
-::choco install spotify
-::choco install vlc
-::choco install cccp
-::choco install handbrake.install
+cinst 7zip
+cinst peazip
 
 
 
-REM Other tools
-::choco install lastpass
-choco install autohotkey_l
-REM choco install autohotkey.portable
-::choco install teamviewer
-::choco install FoxitReader
-::choco install filezilla
-
-::choco install paint.net
-
-::choco install DotNet4.5
-
-
-choco install ccleaner
-
-
-REM ### Zip & Compression ###
-choco install 7zip.install
-REM choco install peazip.install
-
-
+start https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm?hl=en
+start https://ninite.com/
