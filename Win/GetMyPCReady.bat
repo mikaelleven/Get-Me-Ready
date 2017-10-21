@@ -12,22 +12,15 @@ REM Core applications
 CALL Core.bat
 
 REM Developer tools
-::CALL Developer.bat
+CALL Developer.bat
 
 REM Productivity tools
-::CALL Productivity.bat
+CALL Productivity.bat
 
 REM PowerTools
-::CALL PowerTools.bat
+CALL PowerTools.bat
 
 REM Additional fixes
-::CALL Fix-CommandPrompt.bat
-
-
-
-
-
-
-
-
+CALL Fix-CommandPrompt.bat
+START Flux-Cursor-Fix.reg
 
