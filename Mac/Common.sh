@@ -6,22 +6,23 @@ echo
 # Note: first we install OS X tweak utilities, those are specifically named to be easy to spot (if you want to disable them)
 
 # Xtra Finder
-brew cask install xtrafinder
+#brew cask install xtrafinder
 
 
 # Alfred (run or install)
-if [ -e /Applications/Alfred\ 2.app ]
+if [ -e /Applications/Alfred\ 3.app ]
+then
+	open /Applications/Alfred\ 3.app
+elif [ -e /Applications/Alfred\ 2.app ]
 then
 	open /Applications/Alfred\ 2.app
+elif [ -e /Applications/Alfred.app ]
+then
+	open /Applications/Alfred.app
 else
-	if [ -e /Applications/Alfred.app ]
-	then
-		open /Applications/Alfred.app
-	else
-		curl -s http://www.getmacapps.com/raw/1k4fnc6pt | sh # Alfred
-		open /Applications/Alfred\ 2.app
-	fi	
-fi
+	curl -s http://www.getmacapps.com/raw/1k4fnc6pt | sh # Alfred
+	open /Applications/Alfred\ 3.app
+fi	
 
 echo 
 read -p "Please start Alfred (or make sure it’s running) and then press any key when Alfred is running... " -n1 -s
@@ -53,7 +54,7 @@ brew cask install firefox ##curl -s http://www.getmacapps.com/raw/9 | sh # FireF
 #brew cask install opera-next
 
 # General purpose applications
-brew cask install flash
+brew cask install flash-player
 brew cask install java
 brew cask install teamviewer
 brew cask install filezilla ##curl -s http://www.getmacapps.com/raw/9zldt | sh # FileZilla
@@ -66,13 +67,13 @@ brew cask install vlc ##curl -s http://www.getmacapps.com/raw/3l | sh # VLC Play
 #brew cask install transmit
 
 ## Sublime Text special
-brew tap caskroom/versions # Needed for ST3
-brew cask install sublime-text3 # ST3 ##curl -s http://www.getmacapps.com/raw/b8jl | sh
+#brew tap caskroom/versions # Needed for ST3
+#brew cask install sublime-text3 # ST3 ##curl -s http://www.getmacapps.com/raw/b8jl | sh
+brew cask install sublime-text # ST3
 
 
 # Open installed applications
 open /Applications/Flux.app
-open /Applications/Dropbox.app
 open /Applications/XtraFinder.app
 
 # AdBlock / uBlock Origin
