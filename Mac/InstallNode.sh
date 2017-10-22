@@ -18,6 +18,13 @@ export NVM_DIR="$HOME/.nvm"
 
 # Install latest LTS version of NodeJS
 nvm install --lts
+nvm install --lts=argon
+nvm install --lts=boron
+nvm install node
+
+source ~/.bash_profile 
+
+nvm use stable
 
 echo.
 echo "NodeJS installed!"
