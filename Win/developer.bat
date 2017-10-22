@@ -75,10 +75,12 @@ cinst github
 cinst gitkraken
 
 
-REM ### CLOUD SERVICES ###
+REM ### CLOUD & CONTAINER SERVICES ###
 ::cinst awstools.powershell
 ::cinst awscli
 cinst WindowsAzurePowerShell
+cinst docker-for-windows
+::cinst docker-toolbox
 
 
 rem >> cinst VisualStudio2013Ultimate
