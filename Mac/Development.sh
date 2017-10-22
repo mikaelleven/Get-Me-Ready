@@ -5,6 +5,8 @@ echo -ne "Installing development applications, please wait..."
 ### Prepare script ###
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+### It is highly recommended to install XCode right away (it is a massive download)
+open macappstore://itunes.apple.com/se/app/xcode/id497799835
 
 ### General development tools ###
 brew install wget
@@ -14,19 +16,21 @@ brew install wget
 brew install git
 brew install git-flow
 brew cask install gitkraken
-brew cask install github ##curl -s http://www.getmacapps.com/raw/jz6rl | sh # GitHub
+brew cask install github-desktop ##curl -s http://www.getmacapps.com/raw/jz6rl | sh # GitHub
 brew cask install sourcetree ##curl -s http://www.getmacapps.com/raw/4zsox | sh # SourceTree
 
 
 ### Frameworks ###
 #brew cask install mono-mdk
-brew cask install python
-brew cask install python3
+brew install python
+brew install python3
 
 
 ### NodeJS ###
 source "$DIR/InstallNode.sh"
 npm install -g bower
+npm install -g webpack
+npm install -g yarn
 npm install -g grunt-cli gulp
 npm install -g yo
 npm install -g generator-ng-fullstack
@@ -35,16 +39,16 @@ npm install -g generator-keystone
 
 ### TypeScript ###
 npm install -g typescript
-npm install -g typings
-typings install dt~node --global --save
-typings install dt~express dt~serve-static dt~express-serve-static-core --global --save
-typings install dt~elasticsearch --global --save
+# npm install -g typings
+# typings install dt~node --global --save
+# typings install dt~express dt~serve-static dt~express-serve-static-core --global --save
+# typings install dt~elasticsearch --global --save
 
 
 ### Application/cross-platform Frameworks ###
 brew cask install electron
 npm install --global yo generator-electron
-typings install dt~electron --global --save
+#typings install dt~electron --global --save
 
 
 ### Xamarin ###
@@ -57,19 +61,21 @@ brew cask install xamarin-studio
 
 ### NativeScript ###
 
-# iOS / XCode pre-req
-sudo gem install xcodeproj
-sudo gem install cocoapods
+# # iOS / XCode pre-req
+# sudo gem install xcodeproj
+# sudo gem install cocoapods
 
-# Android / Java pre-req
-brew cask install java
-echo "export JAVA_HOME=\$(/usr/libexec/java_home)" >> ~/.bash_profile
-brew install android-sdk
-echo "export ANDROID_HOME=/usr/local/opt/android-sdk" >> ~/.bash_profile
-android update sdk --filter tools,platform-tools,android-23,build-tools-23.0.3,extra-android-m2repository,extra-google-m2repository,extra-android-support --all --no-ui
+# # Android / Java pre-req
+# brew cask install java
+# echo "export JAVA_HOME=\$(/usr/libexec/java_home)" >> ~/.bash_profile
+# brew install android-sdk
+# echo "export ANDROID_HOME=/usr/local/opt/android-sdk" >> ~/.bash_profile
+# android update sdk --filter tools,platform-tools,android-23,build-tools-23.0.3,extra-android-m2repository,extra-google-m2repository,extra-android-support --all --no-ui
 
 # Install NativeScript
 npm -g install nativescript
+ruby -e "$(curl -fsSL https://www.nativescript.org/setup/mac)"
+
 
 
 ### .NET / Visual Studio for Mac ###
@@ -96,8 +102,8 @@ brew install heroku
 ### Databases, cache and storage ###
 brew cask install postgres
 brew cask install mongodb
-brew cask install rabbitmq
-brew cask install redis
+brew cask install rabbitmq-app
+brew cask install redis-app
 brew install memcached
 brew install elasticsearch
 
