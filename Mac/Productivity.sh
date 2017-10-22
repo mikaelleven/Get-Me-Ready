@@ -15,7 +15,7 @@ brew cask install skype ##curl -s http://www.getmacapps.com/raw/sh | sh # Skype
 # General productivity tools
 brew cask install omnigraffle
 brew cask install dropbox ##curl -s http://www.getmacapps.com/raw/6bl | sh # dropbox
-brew cask install google-drive ##curl -s http://www.getmacapps.com/raw/pa9 | sh # Google Drive
+brew install gdrive ##curl -s http://www.getmacapps.com/raw/pa9 | sh # Google Drive
 brew cask install onedrive
 brew cask install xmind
 
@@ -32,3 +32,7 @@ brew cask install skitch ## curl -s http://getmacapps.com/raw/b33j9ynrb5 | sh # 
 #brew cask install microsoft-office # Office 2016 (v15)
 #brew cask install caskroom/versions/microsoft-office-2011
 
+
+# Open installed applications
+open /Applications/Dropbox.app
+open /usr/local/Caskroom/lastpass/latest/LastPass\ Installer.app/
