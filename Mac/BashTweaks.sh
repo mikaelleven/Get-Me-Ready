@@ -22,11 +22,9 @@ echo "export LSCOLORS='ExFxcxdxCxegedabagacad' # Set actual ls colors" >> ~/.bas
 
 
 ### Enable Bash format & colors (username etc) ###
+echo "#export PS1='\h[\[\033[01;33m\]\u\[\e[00m\]]\[\e[01;8;31m\]\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\] \$ ' # Single-line prompt" >> ~/.bash_profile
+echo "export PS1='\[\033[00;36m\]\w\[\033[00m\]\n\h[\[\033[01;33m\]\u\[\e[00m\]]\[\e[01;8;31m\]\[\033[00m\] \$ ' # Multi-line prompt" >> ~/.bash_profile
 
-#export PS1='\[\033[01;8;33m\]\u\[\e[00m\]\[\e[01;8;31m\]@\h\[\033[00m\]:\[\033[00;01;8;36m\]\w\[\033[00m\]\$ '
-export PS1='\h[\[\033[01;33m\]\u\[\e[00m\]]\[\e[01;8;31m\]\[\033[00m\]:\[\033[00;36m\]\w\[\033[00m\]\$ ' >> ~/.bash_profile
-
-#export PS1='\[\e  [01;8;33m\]\u\[\e[0m\]@\[\e[0;32m\]\h\[\e[0m\]:\[\e[0;34m\]\w\[\e[0m\]\$ '
 
 
 
