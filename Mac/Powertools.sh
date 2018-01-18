@@ -16,6 +16,14 @@ brew cask install fluid
 brew cask install etcher
 
 
+brew cask install hammerspoon
+brew cask install karabiner
+
+if [ -e /Applications/Hammerspoon.app ] 
+then
+	open /Applications/Hammerspoon.app
+fi
+
 ### FreeFileSync ###
 brew cask install freefilesync
 # -- 8.5 issue fix >>>>
