@@ -78,3 +78,11 @@ Lägg till:
   - Skicka med aktuellt katalog, t.ex. `..\UpdateProgramCatalog.ps1 ..\GetMyWinReady`
 - Kör UpdateProgramCatalog.ps1 från GetMyMacReady, validera att programkatalogen uppdateras korrekt
 </del>
+
+# Skapa basfiler för GetMyNixReady [COMPLETED]
+
+~~- Kopiera README.md från GetMyMacReady till GetMyNixReady
+  - Uppdatera alla Windows-specifika och Mac-specifica referenser till Linux
+- Skapa alias UpdateProgramCatalog.cmd i både GetMyNixReady som anropar .ps1 scriptet från root projektet
+  - Skicka med aktuellt katalog, t.ex. `..\UpdateProgramCatalog.ps1 ..\GetMyNixReady`
+- Kör UpdateProgramCatalog.ps1 från GetMyNixReady, validera att programkatalogen uppdateras korrekt~~
