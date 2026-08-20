@@ -4,4 +4,3 @@
 "Herdr" : $> brew install herdr
 "Hermes" : $> curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 "Alacritty" : $> brew install --cask alacritty
-"WezTerm" : $> brew install --cask wezterm

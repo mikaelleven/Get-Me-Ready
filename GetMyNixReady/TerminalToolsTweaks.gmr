@@ -1,6 +1,0 @@
-# name: Terminal Tools & Tweaks
-# sortindex: 145
-
-"Alacritty" : $> ./Installers/install_alacritty.sh
-"WezTerm" : $> sudo apt install wezterm
-"WezTerm (FreeBSD)" : $> pkg install wezterm
