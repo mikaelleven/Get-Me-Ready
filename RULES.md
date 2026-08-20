@@ -41,7 +41,7 @@ WinGet; other platform agents use their native package manager.
 | `?` | Disabled by default. |
 | `!` | Required entry; it remains selected when its module is enabled. |
 | `# default: true` / `# default: false` | Explicitly sets initial selection. |
-| `"Title" :` | Sets an explicit display title before the command. |
+| `"Title" :` | Sets an explicit display title before the command. The colon is optional when the title is immediately followed by an operator. |
 
 Examples:
 
@@ -49,9 +49,28 @@ Examples:
 ?> Microsoft.Edge
 !> Ollama.Ollama
 ? "Qwen 3" : $> ollama pull 'qwen3:8b'
+"Herdr" $> irm https://herdr.dev/install.ps1 | iex
+"Herdr" > herdr
 ```
 
 An explicit title takes precedence over a generated program or script name.
+When an instruction is written as a label followed by a command, text before
+the operator is the custom title, not part of the command. For example:
+
+```text
+"Herdr": "irm https://herdr.dev/install.ps1 | iex", brew install herdr
+```
+
+is interpreted as the two platform-specific entries:
+
+```text
+"Herdr" $> irm https://herdr.dev/install.ps1 | iex
+"Herdr" > herdr
+```
+
+Use the same title for equivalent platform entries when they represent the
+same program. The title is metadata for display and catalog purposes; it does
+not change the command or cause the quoted label to be executed.
 
 ### Command operators
 

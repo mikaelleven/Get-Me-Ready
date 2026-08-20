@@ -84,6 +84,24 @@ For a single package installation, add one package entry using the exact
 native package identifier. Preserve the module's existing optional/default
 selection style unless the user explicitly requests another behavior.
 
+When the request uses a labeled instruction such as:
+
+```text
+"Herdr": "irm https://herdr.dev/install.ps1 | iex", brew install herdr
+```
+
+interpret the quoted label as an explicit display title and create
+platform-specific entries with that title:
+
+```text
+"Herdr" $> irm https://herdr.dev/install.ps1 | iex
+"Herdr" > herdr
+```
+
+The colon after the title is optional when the title is immediately followed
+by a GMR operator. Keep the title identical across equivalent platform
+entries; never include the title text in the executable command.
+
 For a multi-step installation, create one application-specific script in the
 target registry and add exactly one script entry:
 
