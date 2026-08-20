@@ -1,5 +1,5 @@
 # name: Terminal Tools & Tweaks
 # sortindex: 145
 
-$> brew install herdr
-$> curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+"Herdr" : $> brew install herdr
+"Hermes" : $> curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash

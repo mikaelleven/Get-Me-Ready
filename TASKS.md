@@ -64,3 +64,17 @@ Lägg till:
 - "Herdr": "irm https://herdr.dev/install.ps1 | iex", brew install herdr
 - "Hermes": iex (irm https://hermes-agent.nousresearch.com/install.ps1), curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 </del>
+
+
+# Skapa basfiler för GetMyMacReady [COMPLETED]
+
+<del>
+- Kopiera README.md från GetMyWinReady till GetMyMacReady
+  - Uppdatera alla Windows-specifika referenser till macOS
+- Flytta update program catalog-scriptet från GetMyWinReady till GetMeReady (root projektet)
+  - Scriptet ska ta katalog som input, t.ex. `UpdateProgramCatalog.cmd GetMyWinReady`
+  - Scriptet uppdaterar programkatalogen för den angivna katalogen
+- Skapa alias UpdateProgramCatalog.cmd i både GetMyWinReady och GetMyMacReady som anropar .ps1 scriptet från root projektet
+  - Skicka med aktuellt katalog, t.ex. `..\UpdateProgramCatalog.ps1 ..\GetMyWinReady`
+- Kör UpdateProgramCatalog.ps1 från GetMyMacReady, validera att programkatalogen uppdateras korrekt
+</del>

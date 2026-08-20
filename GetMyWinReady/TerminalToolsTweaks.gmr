@@ -1,5 +1,5 @@
 # name: Terminal Tools & Tweaks
 # sortindex: 145
 
-$> irm https://herdr.dev/install.ps1 | iex
-$> irm https://hermes-agent.nousresearch.com/install.ps1 | iex
+"Herdr" : $> irm https://herdr.dev/install.ps1 | iex
+"Hermes" : $> irm https://hermes-agent.nousresearch.com/install.ps1 | iex
