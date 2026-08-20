@@ -86,3 +86,9 @@ Lägg till:
 - Skapa alias UpdateProgramCatalog.cmd i både GetMyNixReady som anropar .ps1 scriptet från root projektet
   - Skicka med aktuellt katalog, t.ex. `..\UpdateProgramCatalog.ps1 ..\GetMyNixReady`
 - Kör UpdateProgramCatalog.ps1 från GetMyNixReady, validera att programkatalogen uppdateras korrekt~~
+
+# Använd ej globalt minne i projektet [COMPLETED]
+
+~~Uppdatera projektets AGENTS.md med instruktioner för att använda ej globalt minne i projektet (dvs varken läsa eller skriva till MEMORY.md).
+Använd istället projektets dokumentation (README.md, AGENTS.md, DEVELOPMENT.md etc.)
+~~
