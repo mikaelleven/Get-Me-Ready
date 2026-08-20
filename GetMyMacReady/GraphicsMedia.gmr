@@ -1,0 +1,10 @@
+# name: Graphics & Media
+# sortindex: 300
+
+"VLC" : $> brew install --cask vlc
+"HandBrake" : $> brew install --cask handbrake
+"Audacity" : $> brew install --cask audacity
+"GIMP" : $> brew install --cask gimp
+"Blender" : $> brew install --cask blender
+"FreeCAD" : $> brew install --cask freecad
+"KiCad" : $> brew install --cask kicad

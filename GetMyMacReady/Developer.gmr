@@ -1,0 +1,7 @@
+# name: Developer
+# sortindex: 400
+
+"Git" : $> brew install git
+"Node.js" : $> brew install node
+"Lua" : $> brew install lua
+"Visual Studio Code" : $> brew install --cask visual-studio-code

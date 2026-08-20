@@ -92,3 +92,8 @@ Lägg till:
 ~~Uppdatera projektets AGENTS.md med instruktioner för att använda ej globalt minne i projektet (dvs varken läsa eller skriva till MEMORY.md).
 Använd istället projektets dokumentation (README.md, AGENTS.md, DEVELOPMENT.md etc.)
 ~~
+
+# Kopiera kända program från GetMyWinReady till Mac och Linux [COMPLETED]
+
+~~- Analysera programkatalogen i GetMyWinReady undersök vilka program som finns till Mac resp Linux och lägg till relevanta program till GetMyMacReady och GetMyNixReady
+- Om en exact match inte kan göras, ignorera programmet~~

@@ -1,0 +1,9 @@
+# name: Graphics & Media
+# sortindex: 300
+
+"VLC" : > vlc
+"Audacity" : > audacity
+"GIMP" : > gimp
+"Blender" : > blender
+"FreeCAD" : > freecad
+"KiCad" : > kicad

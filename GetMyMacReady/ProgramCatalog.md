@@ -5,14 +5,20 @@ This file is generated best-effort from the entry keys and script paths in the G
 ## Web Browsers
 
 - Mozilla Firefox
+- Vivaldi
+- Opera
+- Brave
 
 ## Terminal Tools & Tweaks
 
+- Herdr
+- Hermes
 - Alacritty
 
 ## Graphics & Media
 
 - VLC
+- HandBrake
 - Audacity
 - GIMP
 - Blender
@@ -24,3 +30,4 @@ This file is generated best-effort from the entry keys and script paths in the G
 - Git
 - Node.js
 - Lua
+- Visual Studio Code

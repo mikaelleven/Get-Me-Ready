@@ -1,0 +1,7 @@
+# name: Web Browsers
+# sortindex: 100
+
+"Mozilla Firefox" : $> brew install --cask firefox
+"Vivaldi" : $> brew install --cask vivaldi
+"Opera" : $> brew install --cask opera
+"Brave" : $> brew install --cask brave-browser
