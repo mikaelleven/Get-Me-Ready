@@ -43,3 +43,10 @@ When changing a registry:
 The detailed interpretation rules for GMR modules belong in `RULES.md` and
 apply equally to all three agents, subject to each platform's command and
 installation capabilities.
+
+## Project memory boundary
+
+Do not read from or write to the global `MEMORY.md` or other global Codex
+memory files when working in this project. Use project-local documentation,
+including this file, `README.md`, `RULES.md`, and other relevant development
+documentation, as the source of project context instead.
