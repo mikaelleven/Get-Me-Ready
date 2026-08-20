@@ -17,7 +17,7 @@ Målbild: en överordnad regelfil som beskriver (markdown) hur GMR-filer ("modul
 Syfte: Definiera en standardiserad metod för att tolka GMR-filer och använda dem för att automatisera plattformsspecifika konfigurationer.
 
 Todo:
- - Utfrå ifrån reglerna i [@GMR-beta.ps1](file:///D:/OneDrive/Projects/Codex/GetMeReady/GetMyWinReady/GMR-beta.ps1)
+ - Utfrå ifrån reglerna i [@GMR.ps1](file:///D:/OneDrive/Projects/Codex/GetMeReady/GetMyWinReady/GMR.ps1)
  - Analysera existerande GMR-filer i .\GetMyWinReady\*.gmr för att definiera standardiserade kategorier
  - Sammanfatta tolkningsreglerna i RULES.md med tydliga instruktioner och exempel
  - Säkerställ att det finns en särskild regler för att installera one-liner PS script från URL:ar (t.ex. "" och "")
