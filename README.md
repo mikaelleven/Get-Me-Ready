@@ -78,6 +78,7 @@ GetMeReady/
 ├── GetMyMacReady/   macOS registry and Homebrew-oriented modules
 ├── GetMyNixReady/   Linux registry and distribution-specific modules
 ├── RULES.md         Shared GMR module contract
+├── Release.ps1      Builds and publishes GitHub release archives
 └── UpdateProgramCatalog.ps1
 ```
 
@@ -86,6 +87,28 @@ catalog of programs available through that registry and a browsable reference
 for discovering tools to install manually. Update the relevant catalog after
 adding, removing, or renaming programs; see the platform guide for its catalog
 workflow.
+
+## Creating releases
+
+`Release.ps1` creates a versioned `all` archive and separate Windows, macOS,
+and Linux archives in `artifacts/`. It reads the four-part version in `VERSION`
+and, when publishing, bumps the minor component by default. Use `-Patch` or
+`-Major` to choose another increment, or `-NoBump` to release the current
+version unchanged:
+
+```powershell
+.\Release.ps1
+.\Release.ps1 -Patch
+.\Release.ps1 -Major
+.\Release.ps1 -NoBump
+```
+
+Publishing requires a clean parent repository, Git, and an authenticated
+[GitHub CLI](https://cli.github.com/) session (`gh auth login`). Unless
+`-NoBump` is used, the script commits and pushes the new `VERSION`, then creates
+the matching GitHub tag and release with all four archives. Use `-PackageOnly`
+to produce the selected-version archives locally without modifying Git or
+GitHub.
 
 ## Contributing
 
