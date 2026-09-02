@@ -6,6 +6,8 @@
 [![macOS: pre-alpha](https://img.shields.io/badge/macOS-pre--alpha-lightgrey)](GetMyMacReady/README.md)
 [![Linux: WIP](https://img.shields.io/badge/Linux-WIP-orange)](GetMyNixReady/README.md)
 
+![GetMeReady Windows Screenshot](docs\images\gmr-get-me-ready-windows-mikaelleven.png)
+
 GetMeReady (GMR) is a collection of platform-specific bootstrappers and
 registries for setting up a new computer repeatably. Select the software,
 tools, and follow-up actions you need, then let the platform agent apply that
