@@ -1,4 +1,4 @@
-# GetMeReady
+# Get Me Ready (GMR)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Windows: beta](https://img.shields.io/badge/Windows-beta-blue)](GetMyWinReady/README.md)
