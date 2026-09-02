@@ -33,12 +33,26 @@ registry and agent intended for your operating system.
 
 ## Quick start
 
-Clone the repository, then open the directory for your platform:
+Run the online installer from an interactive terminal. Use the command native
+to your platform:
 
-```powershell
-git clone https://github.com/mikaelleven/Get-Me-Ready.git
-Set-Location .\Get-Me-Ready
-```
+- **Windows (PowerShell 5.1+ or PowerShell 7):**
+
+  ```powershell
+  irm https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/Install-GMR.ps1 | iex
+  ```
+
+- **macOS or Linux (Bash):**
+
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/Install-GMR.sh | bash
+  ```
+
+Both installers detect the operating system and start its platform-specific
+installer. The PowerShell command can also run on macOS or Linux when
+PowerShell 7 (`pwsh`) is installed, but Bash is the native and recommended
+option on those platforms. Both commands download and execute remote code, so
+inspect the linked installer before running it if you do not trust the source.
 
 - **Windows:** follow the [GetMyWinReady guide](GetMyWinReady/README.md). Its
   current beta entry point is `GMR.ps1`; it discovers the descriptors beside

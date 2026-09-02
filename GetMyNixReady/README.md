@@ -11,6 +11,21 @@ such as running a shell script, executing a program, or opening a URL—are
 described in GMR files. This keeps a standard setup repeatable while allowing
 machine-specific choices.
 
+## Online install
+
+Run this in an interactive terminal to download the Linux registry to
+`${XDG_DATA_HOME:-$HOME/.local/share}/GetMeReady`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/GetMyNixReady/Install-GMR.sh | bash
+```
+
+The command downloads and executes remote code. Review
+[Install-GMR.sh](Install-GMR.sh) before running it if you do not trust the
+source. The installer does not overwrite an existing installation. A Linux GMR
+runner is not available yet, so it installs the registry but cannot execute
+setup actions.
+
 ## Requirements
 
 - A supported Linux distribution with its package manager;

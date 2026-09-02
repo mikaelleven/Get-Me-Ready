@@ -1,5 +1,8 @@
 GetMyWinReady/*
 GetMyMacReady/*
 GetMyNixReady/*
+!GetMyWinReady/Install-GMR.ps1
+!GetMyMacReady/Install-GMR.sh
+!GetMyNixReady/Install-GMR.sh
 GetMyWinReady.7z
 artifacts/

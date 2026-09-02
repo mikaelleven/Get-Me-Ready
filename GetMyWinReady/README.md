@@ -8,6 +8,20 @@ Package lists are installed through WinGet. Other actions—such as running a Po
 
 ## Installation
 
+### Online install
+
+Run this in an interactive PowerShell session to download GMR to
+`$HOME\GetMeReady` and start the installer:
+
+```powershell
+irm https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/GetMyWinReady/Install-GMR.ps1 | iex
+```
+
+The command downloads and executes remote code. Review
+[Install-GMR.ps1](Install-GMR.ps1) before running it if you do not trust the
+source. It refuses to overwrite an existing installation; download the script
+locally to choose another path or use its `-Force` option.
+
 Requirements:
 
 - Windows PowerShell 5.1 or later
