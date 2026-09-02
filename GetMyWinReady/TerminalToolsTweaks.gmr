@@ -1,6 +1,10 @@
 # name: Terminal Tools & Tweaks
 # sortindex: 145
 
-"Herdr" : $> irm https://herdr.dev/install.ps1 | iex
+? "Herdr" : $> irm https://herdr.dev/install.ps1 | iex
 "Hermes" : $> irm https://hermes-agent.nousresearch.com/install.ps1 | iex
 "Alacritty" : Alacritty.Alacritty
+"WezTerm" : wez.wezterm
+psmux
+psmux.psnet
+marlocarlo.pstop

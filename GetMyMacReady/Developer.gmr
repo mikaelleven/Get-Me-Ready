@@ -1,7 +1,12 @@
 # name: Developer
 # sortindex: 400
 
-"Git" : $> brew install git
-"Node.js" : $> brew install node
+!"Git" : $> brew install git
+?"Neovim" : $> brew install neovim
+?"LazyVim" : > https://www.lazyvim.org/installation
+!"Node.js" : $> brew install node
 "Lua" : $> brew install lua
 "Visual Studio Code" : $> brew install --cask visual-studio-code
+?"OpenCode" : $> curl -fsSL https://opencode.ai/install | bash
+"Codex CLI" : $> brew install codex
+"GitHub CLI" : $> brew install gh

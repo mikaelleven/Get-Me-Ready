@@ -14,6 +14,7 @@ This file is generated best-effort from the entry keys and script paths in the G
 - Herdr
 - Hermes
 - Alacritty
+- WezTerm
 
 ## Graphics & Media
 
@@ -28,6 +29,11 @@ This file is generated best-effort from the entry keys and script paths in the G
 ## Developer
 
 - Git
+- Neovim
+- LazyVim
 - Node.js
 - Lua
 - Visual Studio Code
+- OpenCode
+- Codex CLI
+- GitHub CLI

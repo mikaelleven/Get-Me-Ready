@@ -1,6 +1,11 @@
 # name: Developer
 # sortindex: 400
 
-"Git" : > git
+!"Git" : > git
+?"Neovim" : $> sudo apt install neovim
+?"LazyVim" : > https://www.lazyvim.org/installation
 "Node.js" : > nodejs
-"Lua" : > lua5.4
+?"Lua" : > lua5.4
+?"OpenCode" : $> curl -fsSL https://opencode.ai/install | bash
+?"Codex CLI" : $> npm install --global @openai/codex
+"GitHub CLI" : $> sudo apt install gh

@@ -8,7 +8,11 @@ This file is generated best-effort from the entry keys and script paths in the G
 
 ## Terminal Tools & Tweaks
 
+- Herdr
+- Hermes
 - Alacritty
+- WezTerm
+- WezTerm (FreeBSD)
 
 ## Graphics & Media
 
@@ -22,5 +26,10 @@ This file is generated best-effort from the entry keys and script paths in the G
 ## Developer
 
 - Git
+- Neovim
+- LazyVim
 - Node.js
 - Lua
+- OpenCode
+- Codex CLI
+- GitHub CLI
