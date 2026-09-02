@@ -40,6 +40,7 @@ WinGet; other platform agents use their native package manager.
 | --- | --- |
 | `?` | Disabled by default. |
 | `!` | Required entry; it remains selected when its module is enabled. |
+| `^` | Windows only: requires UAC elevation. When one or more selected entries use it, the Windows agent runs the complete selected installation in one elevated process. |
 | `# default: true` / `# default: false` | Explicitly sets initial selection. |
 | `"Title" :` | Sets an explicit display title before the command. The colon is optional when the title is immediately followed by an operator. |
 
@@ -48,10 +49,16 @@ Examples:
 ```text
 ?> Microsoft.Edge
 !> Ollama.Ollama
+^> Microsoft.Sysinternals
 ? "Qwen 3" : $> ollama pull 'qwen3:8b'
 "Herdr" $> irm https://herdr.dev/install.ps1 | iex
 "Herdr" > herdr
 ```
+
+`^` is a prefix rather than a command operator, so it can be combined with
+selection, requirement, title, and package prefixes (for example, `? ^> ...`).
+It is interpreted only by the Windows agent; do not add it to macOS or Linux
+modules.
 
 An explicit title takes precedence over a generated program or script name.
 When an instruction is written as a label followed by a command, text before
