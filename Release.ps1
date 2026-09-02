@@ -132,7 +132,7 @@ function Test-RequiredCommand {
     }
 }
 
-$repositoryRoot = $PSScriptRoot
+$repositoryRoot = [System.IO.Path]::GetFullPath($PSScriptRoot)
 $versionPath = Join-Path $repositoryRoot 'VERSION'
 $artifactsPath = Join-Path $repositoryRoot 'artifacts'
 $platforms = @('GetMyWinReady', 'GetMyMacReady', 'GetMyNixReady')
@@ -162,16 +162,17 @@ if (-not $PackageOnly) {
     Test-RequiredCommand -Name 'gh'
 
     $repositoryTopLevel = (Invoke-ExternalTool -FilePath 'git' -Arguments @('-C', $repositoryRoot, 'rev-parse', '--show-toplevel') | Select-Object -Last 1).ToString().Trim()
+    $repositoryTopLevel = [System.IO.Path]::GetFullPath($repositoryTopLevel)
     if (-not [string]::Equals($repositoryTopLevel, $repositoryRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
         throw "Release.ps1 must run from the root of the parent Git repository: $repositoryRoot"
     }
 
-    $changes = Invoke-ExternalTool -FilePath 'git' -Arguments @('-C', $repositoryRoot, 'status', '--porcelain')
+    $changes = @(Invoke-ExternalTool -FilePath 'git' -Arguments @('-C', $repositoryRoot, 'status', '--porcelain'))
     if ($changes.Count -gt 0) {
         throw 'The parent repository has uncommitted changes. Commit or stash them before publishing a release.'
     }
 
-    $existingTag = Invoke-ExternalTool -FilePath 'git' -Arguments @('-C', $repositoryRoot, 'tag', '--list', $tagName)
+    $existingTag = @(Invoke-ExternalTool -FilePath 'git' -Arguments @('-C', $repositoryRoot, 'tag', '--list', $tagName))
     if ($existingTag.Count -gt 0) {
         throw "Tag already exists locally: $tagName"
     }
