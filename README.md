@@ -1,6 +1,7 @@
 # Get Me Ready (GMR)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Downloads](https://img.shields.io/github/downloads/mikaelleven/Get-Me-Ready/total?label=downloads)](https://github.com/mikaelleven/Get-Me-Ready/releases)
 [![Windows: beta](https://img.shields.io/badge/Windows-beta-blue)](GetMyWinReady/README.md)
 [![macOS: pre-alpha](https://img.shields.io/badge/macOS-pre--alpha-lightgrey)](GetMyMacReady/README.md)
 [![Linux: WIP](https://img.shields.io/badge/Linux-WIP-orange)](GetMyNixReady/README.md)
