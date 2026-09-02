@@ -3,7 +3,7 @@
 Status: implementation specification for the macOS and Linux TUI ports.
 
 This document specifies the observable behavior of the Windows TUI in
-`GetMyWinReady/GMR-beta.ps1`. The macOS and Linux implementations MUST expose
+`GetMyWinReady/GMR.ps1`. The macOS and Linux implementations MUST expose
 the same menus, key behavior, state transitions, ordering, labels, dry-run
 flow, error behavior, and `.gmr` interpretation. Only the platform execution
 adapter is allowed to change how a package or shell command is executed.
@@ -14,17 +14,23 @@ The words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** are normative.
 
 The implementation was reverse-engineered from these project-local sources:
 
-- `GetMyWinReady/GMR-beta.ps1` and `GetMyWinReady/tests/GMR-Beta.Tests.ps1`;
+- `GetMyWinReady/GMR.ps1` and `GetMyWinReady/tests/GMR-Beta.Tests.ps1`;
 - `GetMyWinReady/external/ConsoleTUI/README.md`;
 - `GetMyWinReady/external/ConsoleTUI/src/ConsoleTui/ConsoleTui.psm1` and its tests;
 - the root `RULES.md`;
 - `GetMyWinReady/README.md`, `GetMyMacReady/README.md`, and
   `GetMyNixReady/README.md`.
 
-The Windows stable launcher, `GetMyWinReady/GMR.ps1`, is useful for legacy
+The obsolete Windows launcher, `GetMyWinReady/GMR-legacy.ps1`, is retained for legacy
 behavior and execution terminology but is not the TUI contract. Where the
 stable launcher, `RULES.md`, and the beta implementation differ, this document
 records the current beta behavior so that all TUI ports remain interoperable.
+
+Normative change in this specification: per-entry `# default:` metadata is
+removed. The TUI contract uses only the `?` and `!` prefixes for individual
+entry selection. The Windows beta implementation and its tests must be updated
+to this rule before the Windows implementation can be considered fully
+conformant.
 
 ### 1.1 In scope
 
@@ -127,7 +133,7 @@ Each parsed entry contains:
 | `Kind` | `Package` or `ShellCommand`. |
 | `Title` | Explicit title, or empty. |
 | `DisplayName` | Text shown in the module menu. |
-| `DefaultEnabled` | Initial selection when the module is enabled. |
+| `DefaultEnabled` | Derived from the entry prefix: true without `?`, false with `?`; `!` is mandatory and therefore selected when the module is enabled. |
 | `Mandatory` | Whether the entry cannot be deselected. |
 | `PackageSelector` | `id` or `name`; defaults as described below. |
 | `PackageSource` | `winget` or `msstore` in the Windows grammar; `winget` by default. |
@@ -147,7 +153,7 @@ Each discovered `.gmr` file becomes one module containing:
 | --- | --- |
 | `FilePath` | Absolute descriptor path. |
 | `FileName` | Descriptor file name. |
-| `DisplayName` | `# name:` value, otherwise the file name including `.gmr`. |
+| `DisplayName` | `# name:` value, otherwise the file name excluding `.gmr`. |
 | `SortIndex` | `# sortindex:` value, otherwise the maximum integer. |
 | `Required` | Module-level `# required:` value; false by default. |
 | `Selected` | Module-level `# selected:` value; false by default. |
@@ -236,32 +242,31 @@ top-level descriptor currently being displayed. This matches the current
 Windows beta, whose normalized entry records do not retain the included file as
 a separate path context.
 
-### 6.4 Entry defaults and requirement metadata
+### 6.4 Entry selection prefixes
 
-The following forms set entry selection state:
+Selection of individual entries is controlled only by the `?` and `!`
+prefixes. There is no per-entry default metadata.
 
 ```text
-# default: false
-Some.Package
-
-Some.Other.Package # default: no
-
+Default.Package
+?> Optional.Not.Selected.By.Default
 !> Required.Package
-?> Optional.By.Default
 ```
 
-`# default:` on its own applies to the next entry. The inline form applies to
-the same entry and wins over the pending default. After an entry is parsed,
-the pending default returns to `true`.
+- No selection prefix means the entry is preselected when its module is
+  enabled.
+- `?` means optional: the entry is not selected by default.
+- `!` means mandatory: the entry is selected whenever its module is enabled
+  and cannot be deselected.
 
-- Default enabled is true unless explicitly set to false.
-- `?` sets default enabled to false.
-- `!` sets `Mandatory` to true and makes the entry impossible to turn off.
-- A mandatory entry is enabled whenever its module is enabled, regardless of
-  its default value.
+`# default:` is not supported for individual entries. A standalone line that
+starts with `# default:` is an unknown comment and is ignored. An inline
+`# default:` suffix is not an inline comment and MUST NOT change selection; it
+is invalid descriptor syntax and should be reported during validation rather
+than treated as selection metadata.
 
-No generic inline-comment syntax is supported. The only inline suffix with
-special meaning is the exact `# default: true|false|yes|no` form.
+No generic inline-comment syntax is supported. The `?` and `!` prefixes are
+the only per-entry selection controls.
 
 ### 6.5 Operators and entry kinds
 
@@ -888,8 +893,9 @@ Use shared fixture files and compare normalized parsed records across Windows,
 macOS, and Linux. Cover:
 
 - module names, sorting, selected/required metadata;
-- default metadata before and after entries;
-- inline default metadata;
+- implicit defaults for entries without `?`;
+- optional `?` entries and mandatory `!` entries;
+- rejection or non-interpretation of `# default:` syntax;
 - nested includes and include ordering;
 - missing includes and circular includes;
 - quoted titles and quoted package names;
