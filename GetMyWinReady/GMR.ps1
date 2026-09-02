@@ -25,6 +25,7 @@ param(
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:UseWingetVerbose = $PSBoundParameters.ContainsKey('Verbose') -and [bool]$PSBoundParameters['Verbose']
+Clear-Host
 
 $script:GmrRootDirectory = $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($script:GmrRootDirectory)) {
@@ -35,10 +36,10 @@ $consoleTuiManifest = Join-Path $script:GmrRootDirectory 'external\ConsoleTUI\sr
 if (-not (Test-Path -LiteralPath $consoleTuiManifest -PathType Leaf)) {
     throw "ConsoleTUI was not found at '$consoleTuiManifest'. Initialize the Git submodule first."
 }
-Import-Module $consoleTuiManifest -Force -ErrorAction Stop
+Import-Module $consoleTuiManifest -Force -ErrorAction Stop -WarningAction SilentlyContinue
 . (Join-Path $script:GmrRootDirectory 'tools\Get-ProgramDisplayName.ps1')
-Import-Module (Join-Path $script:GmrRootDirectory 'Gmr.Common.psm1') -Force -ErrorAction Stop
-Import-Module (Join-Path $script:GmrRootDirectory 'Gmr.Selection.psm1') -Force -ErrorAction Stop
+Import-Module (Join-Path $script:GmrRootDirectory 'Gmr.Common.psm1') -Force -ErrorAction Stop -WarningAction SilentlyContinue
+Import-Module (Join-Path $script:GmrRootDirectory 'Gmr.Selection.psm1') -Force -ErrorAction Stop -WarningAction SilentlyContinue
 $script:GmrState = [pscustomobject] @{ SelectionTouched = $false }
 
 function Split-GmrCommandLine {
@@ -858,6 +859,7 @@ function Invoke-GmrSelectedCommands {
 function Start-GmrBeta {
     param([switch] $Clean)
 
+    Clear-Host
     $script:GmrState.SelectionTouched = $false
     $descriptorFiles = @(
         Get-ChildItem -LiteralPath $script:GmrRootDirectory -File |
