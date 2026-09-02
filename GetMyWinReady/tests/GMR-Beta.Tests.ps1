@@ -22,7 +22,7 @@ Describe 'GMR beta menu model' {
         { Get-GmrMenuLayout -ItemCount 49 } | Should -Throw
     }
 
-    It 'parses default false metadata for the next entry' {
+    It 'ignores standalone default comments and rejects inline default metadata' {
         $path = Join-Path $TestDrive 'Defaults.gmr'
         Set-Content -LiteralPath $path -Value @(
             'One.Package'
@@ -31,11 +31,13 @@ Describe 'GMR beta menu model' {
             'Three.Package # default: no'
         )
 
+        { Get-GmrEntryRecords -FilePath $path } | Should -Throw '*Inline # default:*'
+
+        Set-Content -LiteralPath $path -Value @('One.Package', '# default: false', 'Two.Package')
         $records = @(Get-GmrEntryRecords -FilePath $path)
-        $records.Count | Should -Be 3
+        $records.Count | Should -Be 2
         $records[0].DefaultEnabled | Should -Be $true
-        $records[1].DefaultEnabled | Should -Be $false
-        $records[2].DefaultEnabled | Should -Be $false
+        $records[1].DefaultEnabled | Should -Be $true
     }
 
     It 'interprets required and selected metadata as module attributes' {
@@ -58,6 +60,12 @@ Describe 'GMR beta menu model' {
         $module.Enabled | Should -Be $true
         $module.Entries[0].Enabled | Should -Be $false
         $module.Entries[1].Enabled | Should -Be $true
+
+        $cleanModule = Get-GmrDescriptor -File (Get-Item -LiteralPath $path) -Clean
+        $cleanModule.Required | Should -Be $false
+        $cleanModule.Selected | Should -Be $false
+        $cleanModule.Enabled | Should -Be $false
+        @($cleanModule.Entries | Where-Object Enabled).Count | Should -Be 0
     }
 
     It 'allows a selected module to be disabled but keeps a required module enabled' {
@@ -124,6 +132,27 @@ Describe 'GMR beta menu model' {
         $menu = New-GmrModuleMenu -Module $module
         & $menu.Items[1].SpaceAction
         $module.Entries[0].Enabled | Should -Be $true
+    }
+
+    It 'selects a required entry when its inactive module is opened' {
+        $module = [pscustomobject] @{
+            Enabled = $false
+            DisplayName = 'Test'
+            MenuItem = $null
+            Menu = $null
+            Entries = [object[]] @(
+                [pscustomobject] @{ Enabled = $false; DefaultEnabled = $false; Mandatory = $true; MenuItem = $null; DisplayName = 'Required' }
+                [pscustomobject] @{ Enabled = $false; DefaultEnabled = $false; Mandatory = $false; MenuItem = $null; DisplayName = 'Optional' }
+            )
+        }
+        $mainMenu = New-GmrMainMenu -Modules @($module)
+
+        & $module.Menu.Items[1].SpaceAction
+
+        $module.Entries[0].Enabled | Should -Be $true
+        $module.Entries[1].Enabled | Should -Be $false
+        $module.Enabled | Should -Be $true
+        $mainMenu.Items[0].Label | Should -Be '[*] Test [1/2]'
     }
 
     It 'cycles module Space through Selective, All, and None' {
@@ -194,6 +223,19 @@ Describe 'GMR beta menu model' {
         $submenu.Items[0].GoBack | Should -Be $true
         $submenu.Items[0].Label | Should -Be '(Back)'
 
+        $moduleWithEntry = [pscustomobject] @{
+            Enabled = $false
+            DisplayName = 'Test'
+            MenuItem = $null
+            Menu = $null
+            Entries = [object[]] @(
+                [pscustomobject] @{ Enabled = $false; DefaultEnabled = $true; Mandatory = $false; MenuItem = $null; DisplayName = 'One' }
+            )
+        }
+        $submenu = New-GmrModuleMenu -Module $moduleWithEntry
+        $submenu.Items[1].GoBack | Should -Be $true
+        $submenu.Items[1].SpaceAction | Should -Not -BeNullOrEmpty
+
         $restorePoint = $true
         $executionMenu = New-GmrExecutionMenu -CreateRestorePoint ([ref] $restorePoint)
         $executionMenu.Items[0].Label | Should -Be '[x] Create restore point'
@@ -243,6 +285,7 @@ Describe 'GMR beta syntax' {
             @{ Line = '?> Microsoft.Edge'; Type = 'Winget'; Command = 'Microsoft.Edge'; Default = $false; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null }
             @{ Line = '? : "Google Chrome"> Chrome'; Type = 'Winget'; Command = 'Chrome'; Default = $false; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = 'Google Chrome' }
             @{ Line = '!> Vivaldi.Vivaldi'; Type = 'Winget'; Command = 'Vivaldi.Vivaldi'; Default = $true; Mandatory = $true; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null }
+            @{ Line = '^> Microsoft.Sysinternals'; Type = 'Winget'; Command = 'Microsoft.Sysinternals'; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null; RequiresElevation = $true }
             @{ Line = '$> .\Installers\Install-uBlockOriginLite.ps1'; Type = 'PowerShell'; Command = '.\Installers\Install-uBlockOriginLite.ps1'; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null }
             @{ Line = '"Write Hello" : $> Write-Host ''Hello'''; Type = 'PowerShell'; Command = 'Write-Host ''Hello'''; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = 'Write Hello' }
             @{ Line = '? "Ollama Qwen 3.5" : $> ollama pull qwen35'; Type = 'PowerShell'; Command = 'ollama pull qwen35'; Default = $false; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = 'Ollama Qwen 3.5' }
@@ -254,6 +297,7 @@ Describe 'GMR beta syntax' {
             $record.Command | Should -Be $case.Command
             $record.DefaultEnabled | Should -Be $case.Default
             $record.Mandatory | Should -Be $case.Mandatory
+            $record.RequiresElevation | Should -Be $(if ($case.ContainsKey('RequiresElevation')) { $case.RequiresElevation } else { $false })
             $record.WingetSelector | Should -Be $case.Selector
             $record.WingetExact | Should -Be $case.Exact
             $record.WingetSource | Should -Be $case.Source
@@ -273,6 +317,31 @@ Describe 'GMR beta syntax' {
         $record = ConvertFrom-GmrEntryLine -Line 'PS> .\Installers\Install-Python.ps1'
         $record.Type | Should -Be 'PowerShell'
         $record.Command | Should -Be '.\Installers\Install-Python.ps1'
+    }
+
+    It 'runs a parameterless child script without passing an argument array' {
+        $childScriptPath = Join-Path $TestDrive 'Install-Test.ps1'
+        $descriptorPath = Join-Path $TestDrive 'Test.gmr'
+        Set-Content -LiteralPath $childScriptPath -Value @(
+            '[CmdletBinding()]'
+            'param()'
+            '$global:GmrParameterlessChildScriptRan = $true'
+        )
+        Set-Content -LiteralPath $descriptorPath -Value '# Test descriptor'
+        $global:GmrParameterlessChildScriptRan = $false
+        $module = [pscustomobject] @{
+            Type = '.gmr'
+            File = Get-Item -LiteralPath $descriptorPath
+            Enabled = $true
+            Entries = [object[]] @(
+                [pscustomobject] @{ Enabled = $true; Type = 'PowerShell'; Command = '.\Install-Test.ps1' }
+            )
+        }
+
+        Invoke-GmrSelectedCommands -Modules @($module) -DryRun $false -CreateRestorePoint $false
+
+        $global:GmrParameterlessChildScriptRan | Should -Be $true
+        Remove-Variable -Name GmrParameterlessChildScriptRan -Scope Global
     }
 
     It 'derives GMR beta titles from the shared program name rules' {

@@ -170,14 +170,14 @@ For XML, the path identifies the parent and new final element; the text block is
 | `# include: Other.gmr` | Includes another `.gmr` file. Relative paths resolve from the including file. Includes may be nested; circular includes are rejected. |
 | `# comment` or blank line | Ignored. |
 | `# required: true` | In the beta interface, marks the next entry as required while its module is selected. |
-| `.gmr` entry | One command per line: `[{prefix}[>]] {command}`. Without `>` it is a standard WinGet command. `?` starts disabled, `!` is required, and `"title" :` replaces the generated title. |
+| `.gmr` entry | One command per line: `[{prefix}[>]] {command}`. Without `>` it is a standard WinGet command. `?` starts disabled, `!` is required, `^` requires UAC elevation, and `"title" :` replaces the generated title. |
 | WinGet prefixes | `fuzzy` or `exact` controls `--exact` (default: `exact`); `id` or `name` selects the package field (a quoted command implies `name`); `winget` or `msstore` selects `--source`. |
 | PowerShell `.gmr` entry | `$> command` runs a PowerShell command or `.ps1` file. `PS>` is accepted for existing descriptors but obsolete. |
 | `.gmrs` entry | A PowerShell one-liner, `.ps1`, `.cmd`, `.bat`, `.exe`, or `https://`/`www.` URL. |
 
 `# include:` is valid only in `.gmr` files. The repository's [Examples.gmrs.example](Examples.gmrs.example) contains additional `.gmrs` examples.
 
-For example, `?> Microsoft.Edge`, `!> Vivaldi.Vivaldi`, `"Write Hello" : $> Write-Host 'Hello'`, and `fuzzy name msstore> "Google Chrome"` are valid `.gmr` entries.
+For example, `?> Microsoft.Edge`, `!> Vivaldi.Vivaldi`, `^> Microsoft.Sysinternals`, `"Write Hello" : $> Write-Host 'Hello'`, and `fuzzy name msstore> "Google Chrome"` are valid `.gmr` entries. When at least one selected entry has `^`, GMR requests UAC elevation once and runs all selected installations in that elevated process.
 
 ## Vidareutveckling
 

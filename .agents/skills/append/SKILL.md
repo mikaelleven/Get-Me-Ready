@@ -84,6 +84,11 @@ For a single package installation, add one package entry using the exact
 native package identifier. Preserve the module's existing optional/default
 selection style unless the user explicitly requests another behavior.
 
+For a Windows entry, add the `^` UAC-elevation prefix when the request includes
+the keyword `UAC` or `admin`. The prefix may be combined with `?`, `!`, a title,
+and package-selection prefixes; for example, `? ^> Example.Package`. Do not
+add `^` to macOS or Linux entries.
+
 When the request uses a labeled instruction such as:
 
 ```text
