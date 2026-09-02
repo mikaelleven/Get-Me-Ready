@@ -8,7 +8,9 @@
 GetMeReady (GMR) is a collection of platform-specific bootstrappers and
 registries for setting up a new computer repeatably. Select the software,
 tools, and follow-up actions you need, then let the platform agent apply that
-configuration with minimal interaction.
+configuration with minimal interaction. It reduces the work of remembering,
+finding, and manually reinstalling the components of a standard fresh-machine
+setup; selected installers may still require credentials or confirmation.
 
 Package installation uses the native package manager for the selected
 platform. GMR modules can also run local scripts or commands and open URLs,
@@ -78,9 +80,11 @@ GetMeReady/
 └── UpdateProgramCatalog.ps1
 ```
 
-Each platform has its own generated `ProgramCatalog.md`. Update the relevant
-catalog after adding, removing, or renaming programs; see the platform guide
-for its catalog workflow.
+Each platform has its own generated `ProgramCatalog.md`. It is both the
+catalog of programs available through that registry and a browsable reference
+for discovering tools to install manually. Update the relevant catalog after
+adding, removing, or renaming programs; see the platform guide for its catalog
+workflow.
 
 ## Contributing
 
