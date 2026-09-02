@@ -225,6 +225,12 @@ try {
 
     Invoke-ExternalTool -FilePath 'gh' -Arguments (@('release', 'create', $tagName, '--title', $tagName, '--generate-notes') + $assets.ToArray()) | Out-Null
 
+    foreach ($asset in $assets) {
+        if (Test-Path -LiteralPath $asset -PathType Leaf) {
+            Remove-Item -LiteralPath $asset -Force
+        }
+    }
+
     [pscustomobject]@{
         Version = $nextVersion
         Tag = $tagName
