@@ -22,7 +22,7 @@ elseif (-not [System.IO.Path]::IsPathRooted($OutputPath)) {
     $OutputPath = Join-Path $repositoryPath $OutputPath
 }
 
-$displayNameScript = Join-Path $PSScriptRoot 'GetMyWinReady\tools\Get-ProgramDisplayName.ps1'
+$displayNameScript = Join-Path (Split-Path -Parent $PSScriptRoot) 'GetMyWinReady\tools\Get-ProgramDisplayName.ps1'
 if (-not (Test-Path -LiteralPath $displayNameScript -PathType Leaf)) {
     throw "Program display-name helper was not found: $displayNameScript"
 }
@@ -78,7 +78,7 @@ $modules = @(
 $output = New-Object 'System.Collections.Generic.List[string]'
 [void]$output.Add('# Programs installable with GetMeReady')
 [void]$output.Add('')
-[void]$output.Add('This file is generated best-effort from the entry keys and script paths in the GMR descriptors. Run `..\UpdateProgramCatalog.ps1 <registry>` after adding or renaming an installable program.')
+[void]$output.Add('This file is generated best-effort from the entry keys and script paths in the GMR descriptors. Run `..\scripts\UpdateProgramCatalog.ps1 <registry>` after adding or renaming an installable program.')
 [void]$output.Add('')
 foreach ($module in $modules) {
     [void]$output.Add("## $($module.Name)")

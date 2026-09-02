@@ -132,7 +132,7 @@ function Test-RequiredCommand {
     }
 }
 
-$repositoryRoot = [System.IO.Path]::GetFullPath($PSScriptRoot)
+$repositoryRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $versionPath = Join-Path $repositoryRoot 'VERSION'
 $artifactsPath = Join-Path $repositoryRoot 'artifacts'
 $platforms = @('GetMyWinReady', 'GetMyMacReady', 'GetMyNixReady')
@@ -189,9 +189,10 @@ try {
 
     $allPackageRoot = Join-Path $temporaryPath "GetMeReady-$nextVersion"
     New-Item -ItemType Directory -Path $allPackageRoot -Force | Out-Null
-    foreach ($fileName in @('LICENSE', 'README.md', 'RULES.md', 'UpdateProgramCatalog.ps1')) {
+    foreach ($fileName in @('LICENSE', 'README.md', 'RULES.md')) {
         Copy-Item -LiteralPath (Join-Path $repositoryRoot $fileName) -Destination (Join-Path $allPackageRoot $fileName) -Force
     }
+    Copy-Item -LiteralPath (Join-Path $repositoryRoot 'scripts') -Destination (Join-Path $allPackageRoot 'scripts') -Recurse -Force
     Set-Content -LiteralPath (Join-Path $allPackageRoot 'VERSION') -Value $nextVersion -Encoding UTF8
 
     foreach ($platform in $platforms) {

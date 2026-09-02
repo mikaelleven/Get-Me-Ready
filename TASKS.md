@@ -75,7 +75,7 @@ Lägg till:
   - Scriptet ska ta katalog som input, t.ex. `UpdateProgramCatalog.cmd GetMyWinReady`
   - Scriptet uppdaterar programkatalogen för den angivna katalogen
 - Skapa alias UpdateProgramCatalog.cmd i både GetMyWinReady och GetMyMacReady som anropar .ps1 scriptet från root projektet
-  - Skicka med aktuellt katalog, t.ex. `..\UpdateProgramCatalog.ps1 ..\GetMyWinReady`
+  - Skicka med aktuellt katalog, t.ex. `..\scripts\UpdateProgramCatalog.ps1 ..\GetMyWinReady`
 - Kör UpdateProgramCatalog.ps1 från GetMyMacReady, validera att programkatalogen uppdateras korrekt
 </del>
 
@@ -84,7 +84,7 @@ Lägg till:
 ~~- Kopiera README.md från GetMyMacReady till GetMyNixReady
   - Uppdatera alla Windows-specifika och Mac-specifica referenser till Linux
 - Skapa alias UpdateProgramCatalog.cmd i både GetMyNixReady som anropar .ps1 scriptet från root projektet
-  - Skicka med aktuellt katalog, t.ex. `..\UpdateProgramCatalog.ps1 ..\GetMyNixReady`
+  - Skicka med aktuellt katalog, t.ex. `..\scripts\UpdateProgramCatalog.ps1 ..\GetMyNixReady`
 - Kör UpdateProgramCatalog.ps1 från GetMyNixReady, validera att programkatalogen uppdateras korrekt~~
 
 # Använd ej globalt minne i projektet [COMPLETED]
