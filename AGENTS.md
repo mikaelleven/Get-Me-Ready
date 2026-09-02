@@ -23,6 +23,11 @@ appropriate Linux package manager and filesystem paths for `GetMyNixReady`.
 The platform agent is responsible for selecting and validating the method
 appropriate to its own operating system.
 
+The platform directories are separate Git repositories. When `/commit` is
+requested, changed files inside `GetMyMacReady/`, `GetMyWinReady/`, and
+`GetMyNixReady/` must be committed in their respective platform repository,
+not in the GetMeReady parent repository.
+
 ## Shared GMR contract
 
 All three registries use the same GMR file format, naming conventions, and
