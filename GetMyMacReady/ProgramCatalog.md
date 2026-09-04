@@ -37,3 +37,6 @@ This file is generated best-effort from the entry keys and script paths in the G
 - OpenCode
 - Codex CLI
 - GitHub CLI
+- Antigravity 2.0
+- Antigravity CLI
+- Antigravity IDE

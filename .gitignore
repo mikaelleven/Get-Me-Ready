@@ -4,5 +4,11 @@ GetMyNixReady/*
 !GetMyWinReady/Install-GMR.ps1
 !GetMyMacReady/Install-GMR.sh
 !GetMyNixReady/Install-GMR.sh
+!GetMyMacReady/Installers/
+!GetMyMacReady/Installers/Install-Antigravity.sh
+!GetMyMacReady/Installers/Install-AntigravityIDE.sh
+!GetMyNixReady/Installers/
+!GetMyNixReady/Installers/Install-Antigravity.sh
+!GetMyNixReady/Installers/Install-AntigravityIDE.sh
 GetMyWinReady.7z
 artifacts/

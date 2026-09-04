@@ -9,3 +9,6 @@
 ?"OpenCode" : $> curl -fsSL https://opencode.ai/install | bash
 ?"Codex CLI" : $> npm install --global @openai/codex
 "GitHub CLI" : $> sudo apt install gh
+"Antigravity 2.0" : $> ./Installers/Install-Antigravity.sh
+"Antigravity CLI" : $> curl -fsSL https://antigravity.google/cli/install.sh | bash
+? "Antigravity IDE" : $> ./Installers/Install-AntigravityIDE.sh
