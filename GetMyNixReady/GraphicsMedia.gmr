@@ -3,6 +3,10 @@
 
 "VLC" : > vlc
 "Audacity" : > audacity
+"FileZilla" : $> sudo apt install filezilla
+"HandBrake" : $> sudo apt install handbrake
+"7-Zip" : $> sudo apt install p7zip-full
+"VeraCrypt" : $> sudo apt install veracrypt
 "GIMP" : > gimp
 "Blender" : > blender
 "FreeCAD" : > freecad

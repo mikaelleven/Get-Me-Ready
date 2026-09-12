@@ -21,6 +21,10 @@ This file is generated best-effort from the entry keys and script paths in the G
 - VLC
 - HandBrake
 - Audacity
+- FileZilla
+- 7-Zip
+- VeraCrypt
+- uTorrent
 - GIMP
 - Blender
 - FreeCAD

@@ -4,6 +4,10 @@
 "VLC" : $> brew install --cask vlc
 "HandBrake" : $> brew install --cask handbrake
 "Audacity" : $> brew install --cask audacity
+"FileZilla" : $> brew install --cask filezilla
+"7-Zip" : $> brew install --cask 7zip
+"VeraCrypt" : $> brew install --cask veracrypt
+"uTorrent" : $> brew install --cask utorrent
 "GIMP" : $> brew install --cask gimp
 "Blender" : $> brew install --cask blender
 "FreeCAD" : $> brew install --cask freecad
