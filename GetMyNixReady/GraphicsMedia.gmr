@@ -11,3 +11,15 @@
 "Blender" : > blender
 "FreeCAD" : > freecad
 "KiCad" : > kicad
+"f.lux" : $> sudo apt install fluxgui
+"Spotify" : $> sudo apt install spotify-client
+"Discord" : $> sudo apt install discord
+"Balena Etcher" : > balena-etcher
+"Slack" : $> sudo apt install slack-desktop
+"Dropbox" : $> sudo apt install nautilus-dropbox
+"Google Drive" : $> sudo apt install google-drive-ocamlfuse
+"OneDrive" : $> sudo apt install onedrive
+"VMware Player" : > https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion
+"LocalSend" : > localsend
+"PDFgear" : > https://www.pdfgear.com/linux/
+"Raspberry Pi Imager" : > rpi-imager

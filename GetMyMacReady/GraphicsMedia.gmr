@@ -12,3 +12,15 @@
 "Blender" : $> brew install --cask blender
 "FreeCAD" : $> brew install --cask freecad
 "KiCad" : $> brew install --cask kicad
+"f.lux" : $> brew install --cask flux
+"Spotify" : $> brew install --cask spotify
+"Discord" : $> brew install --cask discord
+"Balena Etcher" : $> brew install --cask balenaetcher
+"Slack" : $> brew install --cask slack
+"Dropbox" : $> brew install --cask dropbox
+"Google Drive" : $> brew install --cask google-drive
+"OneDrive" : $> brew install --cask onedrive
+"VMware Player" : $> brew install --cask vmware-fusion
+"LocalSend" : $> brew install --cask localsend
+"PDFgear" : $> brew install --cask pdfgear
+"Raspberry Pi Imager" : $> brew install --cask raspberry-pi-imager
