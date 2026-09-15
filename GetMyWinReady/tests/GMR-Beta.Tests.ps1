@@ -286,6 +286,7 @@ Describe 'GMR beta syntax' {
             @{ Line = '? : "Google Chrome"> Chrome'; Type = 'Winget'; Command = 'Chrome'; Default = $false; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = 'Google Chrome' }
             @{ Line = '!> Vivaldi.Vivaldi'; Type = 'Winget'; Command = 'Vivaldi.Vivaldi'; Default = $true; Mandatory = $true; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null }
             @{ Line = '^> Microsoft.Sysinternals'; Type = 'Winget'; Command = 'Microsoft.Sysinternals'; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null; RequiresElevation = $true }
+            @{ Line = '!Git.Git'; Type = 'Winget'; Command = 'Git.Git'; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null; RequiresElevation = $true }
             @{ Line = '$> .\Installers\Install-uBlockOriginLite.ps1'; Type = 'PowerShell'; Command = '.\Installers\Install-uBlockOriginLite.ps1'; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = $null }
             @{ Line = '"Write Hello" : $> Write-Host ''Hello'''; Type = 'PowerShell'; Command = 'Write-Host ''Hello'''; Default = $true; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = 'Write Hello' }
             @{ Line = '? "Ollama Qwen 3.5" : $> ollama pull qwen35'; Type = 'PowerShell'; Command = 'ollama pull qwen35'; Default = $false; Mandatory = $false; Selector = 'id'; Exact = $true; Source = 'winget'; Title = 'Ollama Qwen 3.5' }
@@ -319,16 +320,16 @@ Describe 'GMR beta syntax' {
         $record.Command | Should -Be '.\Installers\Install-Python.ps1'
     }
 
-    It 'runs a parameterless child script without passing an argument array' {
+    It 'runs a parameterless child script in an isolated process' {
         $childScriptPath = Join-Path $TestDrive 'Install-Test.ps1'
+        $resultPath = Join-Path $TestDrive 'child-script-ran.txt'
         $descriptorPath = Join-Path $TestDrive 'Test.gmr'
         Set-Content -LiteralPath $childScriptPath -Value @(
             '[CmdletBinding()]'
             'param()'
-            '$global:GmrParameterlessChildScriptRan = $true'
+            "Set-Content -LiteralPath '$resultPath' -Value 'ran'"
         )
         Set-Content -LiteralPath $descriptorPath -Value '# Test descriptor'
-        $global:GmrParameterlessChildScriptRan = $false
         $module = [pscustomobject] @{
             Type = '.gmr'
             File = Get-Item -LiteralPath $descriptorPath
@@ -340,8 +341,30 @@ Describe 'GMR beta syntax' {
 
         Invoke-GmrSelectedCommands -Modules @($module) -DryRun $false -CreateRestorePoint $false
 
-        $global:GmrParameterlessChildScriptRan | Should -Be $true
-        Remove-Variable -Name GmrParameterlessChildScriptRan -Scope Global
+        Get-Content -LiteralPath $resultPath | Should -Be 'ran'
+    }
+
+    It 'continues after a child script fails' {
+        $failedScriptPath = Join-Path $TestDrive 'Install-Fail.ps1'
+        $successScriptPath = Join-Path $TestDrive 'Install-Succeed.ps1'
+        $resultPath = Join-Path $TestDrive 'later-script-ran.txt'
+        $descriptorPath = Join-Path $TestDrive 'Test.gmr'
+        Set-Content -LiteralPath $failedScriptPath -Value "throw 'expected failure'"
+        Set-Content -LiteralPath $successScriptPath -Value "Set-Content -LiteralPath '$resultPath' -Value 'ran'"
+        Set-Content -LiteralPath $descriptorPath -Value '# Test descriptor'
+        $module = [pscustomobject] @{
+            Type = '.gmr'
+            File = Get-Item -LiteralPath $descriptorPath
+            Enabled = $true
+            Entries = [object[]] @(
+                [pscustomobject] @{ Enabled = $true; Type = 'PowerShell'; Command = '.\Install-Fail.ps1' }
+                [pscustomobject] @{ Enabled = $true; Type = 'PowerShell'; Command = '.\Install-Succeed.ps1' }
+            )
+        }
+
+        Invoke-GmrSelectedCommands -Modules @($module) -DryRun $false -CreateRestorePoint $false
+
+        Get-Content -LiteralPath $resultPath | Should -Be 'ran'
     }
 
     It 'derives GMR beta titles from the shared program name rules' {

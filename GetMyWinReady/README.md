@@ -27,7 +27,7 @@ Requirements:
 - Windows PowerShell 5.1 or later
 - [WinGet](https://learn.microsoft.com/windows/package-manager/winget/) for `.gmr` package installations
 - An interactive PowerShell session
-- Administrator PowerShell only if you choose to create a restore point
+- Permission to approve one UAC prompt when GMR starts
 
 Clone the repository and start it from its root:
 
@@ -108,6 +108,36 @@ Show the contents of each selectable group:
 
 Select only the groups you need during the menu. Selecting `None` skips a group.
 
+### Installationsstatus
+
+GMR stores the selection and progress for each installable entry in `.gmr-state.json` beside `GMR.ps1`. The file is machine-local state, not a descriptor: do not copy it between installations or edit it to mark software as installed.
+
+The JSON root is an object whose properties are stable entry IDs; it has no version or `entries` envelope. Each record repeats its key in `id` and has these fields:
+
+```json
+{
+  "Contoso.Tool": {
+    "id": "Contoso.Tool",
+    "selected": true,
+    "status": 1
+  }
+}
+```
+
+`selected` records the user's current selection independently of progress. `status` is an integer with the following meanings:
+
+| Status | Meaning |
+| --- | --- |
+| `0` | Not selected or not started. |
+| `1` | Selected and waiting to run. |
+| `2` | Running; remains selected and locked in the TUI. |
+| `3` | Completed; the command finished, but its result has not been independently verified. |
+| `4` | Verified; the expected installed or configured result was confirmed. |
+
+GMR resolves the state ID in priority order: WinGet package ID, an explicit custom title or name, script filename or path, then the UTF-8 Base64 form of a PowerShell one-liner. The resolved ID is stored both as the JSON property name and in the record's `id` field.
+
+When GMR restores this file, the TUI restores saved selections but still applies required and mandatory locks. A required module or mandatory entry cannot be deselected through restored state. Entries with status `2` remain selected and locked. Entries with status `3` (completed) or `4` (verified) remain disabled; status `4` is visibly marked as verified.
+
 ## Anpassning
 
 Se [ProgramCatalog.md](ProgramCatalog.md) för en hierarkisk förteckning över alla program som kan installeras med GMR. Katalogen genereras deterministiskt från programnycklar och skriptvägar i deskriptorerna, med undantag i `tools\ProgramNameExceptions.json`, och ska uppdateras med `.\tools\Update-ProgramCatalog.ps1` när program läggs till, tas bort eller byter namn.
@@ -144,6 +174,16 @@ reg.exe add "HKCU\Software\Example" /v Enabled /t REG_DWORD /d 1 /f
 Relative paths resolve from the descriptor file's directory. Quote paths that contain spaces. Review any command before running it: `.gmrs` entries are executable actions, not merely configuration data.
 
 ### Helper scripts
+
+Open the Chrome Web Store pages for Bitwarden, TamperMonkey, uBlock Origin Lite, and LastPass outside the GMR TUI with `tools\Install-BrowserExtensions.ps1`. It supports Chrome, Brave, or both, and opens each page in the selected profile. Browser defaults to `all`; profile defaults to `all`.
+
+```powershell
+.\tools\Install-BrowserExtensions.ps1 chrome default
+.\tools\Install-BrowserExtensions.ps1 brave 1
+.\tools\Install-BrowserExtensions.ps1 all all
+```
+
+The browser argument is `chrome`, `brave`, or `all`. The profile argument is `default`, a profile number such as `1`, or `all`. Only `Default` and `Profile <number>` directories beneath the browser's `User Data` directory are used. The equivalent command-prompt wrapper is `tools\Install-BrowserExtensions.cmd`.
 
 Download a resource and expand environment-variable paths such as `%APPDATA%`:
 
@@ -191,7 +231,7 @@ For XML, the path identifies the parent and new final element; the text block is
 
 `# include:` is valid only in `.gmr` files. The repository's [Examples.gmrs.example](Examples.gmrs.example) contains additional `.gmrs` examples.
 
-For example, `?> Microsoft.Edge`, `!> Vivaldi.Vivaldi`, `^> Microsoft.Sysinternals`, `"Write Hello" : $> Write-Host 'Hello'`, and `fuzzy name msstore> "Google Chrome"` are valid `.gmr` entries. When at least one selected entry has `^`, GMR requests UAC elevation once and runs all selected installations in that elevated process.
+For example, `?> Microsoft.Edge`, `!> Vivaldi.Vivaldi`, `^> Microsoft.Sysinternals`, `"Write Hello" : $> Write-Host 'Hello'`, and `fuzzy name msstore> "Google Chrome"` are valid `.gmr` entries. GMR requests UAC elevation once when it starts and runs the complete session elevated. The `^` prefix remains accepted for compatibility. Each session is saved under `Logs\`.
 
 ## Vidareutveckling
 
@@ -210,6 +250,8 @@ $errors
 ```
 
 `GMR-legacy.ps1` is obsolete and retained for reference only. The current stable beta implementation is `GMR.ps1`; its Pester tests are located in [tests/GMR-Beta.Tests.ps1](tests/GMR-Beta.Tests.ps1).
+
+Custom installer scripts must use GMR's state helper functions rather than writing `.gmr-state.json` directly. Resolve the entry through its stable state ID, preserve the `selected` value, and transition status in order (`1` selected, `2` running, `3` completed). Mark an entry as `4` (verified) only after the installer has checked the result independently—for example, by locating the expected executable, querying the installed package or registry entry, or validating the required configuration. A successful process exit alone is not verification. Keep installer helpers and their verification checks compatible with Windows PowerShell 5.1.
 
 ## FAQ och felsökning
 

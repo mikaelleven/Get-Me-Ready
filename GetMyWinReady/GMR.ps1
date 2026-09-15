@@ -19,13 +19,27 @@
 [CmdletBinding()]
 param(
     [switch] $Clean,
-    [string] $ElevatedSelectionPath
+    [switch] $ElevatedSession
 )
 
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $script:UseWingetVerbose = $PSBoundParameters.ContainsKey('Verbose') -and [bool]$PSBoundParameters['Verbose']
-Clear-Host
+
+function Set-GmrConsoleDefaults {
+    $rawUi = $Host.UI.RawUI
+    if ($null -ne $rawUi) {
+        $rawUi.BackgroundColor = [ConsoleColor]::Black
+        $rawUi.ForegroundColor = [ConsoleColor]::Gray
+    }
+
+    [Console]::BackgroundColor = [ConsoleColor]::Black
+    [Console]::ForegroundColor = [ConsoleColor]::Gray
+    Clear-Host
+}
+
+
+Set-GmrConsoleDefaults
 
 $script:GmrRootDirectory = $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($script:GmrRootDirectory)) {
@@ -40,7 +54,7 @@ Import-Module $consoleTuiManifest -Force -ErrorAction Stop -WarningAction Silent
 . (Join-Path $script:GmrRootDirectory 'tools\Get-ProgramDisplayName.ps1')
 Import-Module (Join-Path $script:GmrRootDirectory 'Gmr.Common.psm1') -Force -ErrorAction Stop -WarningAction SilentlyContinue
 Import-Module (Join-Path $script:GmrRootDirectory 'Gmr.Selection.psm1') -Force -ErrorAction Stop -WarningAction SilentlyContinue
-$script:GmrState = [pscustomobject] @{ SelectionTouched = $false }
+$script:GmrState = [pscustomobject] @{ SelectionTouched = $false; StatePersistenceEnabled = $false }
 
 function Split-GmrCommandLine {
     param([Parameter(Mandatory = $true)][string] $CommandLine)
@@ -94,7 +108,36 @@ function Get-WingetPackageSpec {
     $arguments = @(if ($Entry.WingetSelector -eq 'name') { '--name' } else { '--id' }, $packageName)
     if ($Entry.WingetExact) { $arguments += '--exact' }
     $arguments += @('--source', $Entry.WingetSource, '--silent', '--accept-package-agreements', '--accept-source-agreements', '--disable-interactivity')
-    return [pscustomobject] @{ DisplayName = $packageName; Arguments = [string[]] $arguments }
+    return [pscustomobject] @{
+        DisplayName = $packageName
+        Selector = if ($Entry.WingetSelector -eq 'name') { '--name' } else { '--id' }
+        Source = $Entry.WingetSource
+        Arguments = [string[]] $arguments
+    }
+}
+
+function Test-GmrWingetPackageInstalled {
+    param(
+        [Parameter(Mandatory = $true)][System.Management.Automation.CommandInfo] $WingetCommand,
+        [Parameter(Mandatory = $true)][psobject] $PackageSpec
+    )
+
+    $listArguments = @(
+        'list', $PackageSpec.Selector, $PackageSpec.DisplayName, '--exact',
+        '--source', $PackageSpec.Source, '--disable-interactivity'
+    )
+
+    try {
+        $listOutput = @(& $WingetCommand.Source @listArguments 2>&1 | ForEach-Object { $_.ToString() })
+        $listExitCode = $LASTEXITCODE
+        if ($listExitCode -ne 0) { return $false }
+
+        $outputText = $listOutput -join "`n"
+        return $outputText.IndexOf($PackageSpec.DisplayName, [StringComparison]::OrdinalIgnoreCase) -ge 0
+    }
+    catch {
+        return $false
+    }
 }
 
 function Format-GmrCommandArgument {
@@ -247,6 +290,11 @@ function ConvertFrom-GmrEntryLine {
             }
         }
     }
+    $attachedElevation = $false
+    if ($command -match '^!(?=\S)') {
+        $command = $command.Substring(1).TrimStart()
+        $attachedElevation = $true
+    }
     if ([string]::IsNullOrWhiteSpace($command)) { throw "A .gmr entry command cannot be empty: $Line" }
 
     $title = $null
@@ -261,7 +309,7 @@ function ConvertFrom-GmrEntryLine {
     $wingetSelector = if ($command.TrimStart().StartsWith('"')) { 'name' } else { 'id' }
     $wingetSource = 'winget'
     $wingetExact = $true
-    $requiresElevation = $false
+    $requiresElevation = $attachedElevation
     foreach ($prefix in $prefixTokens) {
         switch -Regex ($prefix) {
             '^\?$' { $DefaultEnabled = $false; continue }
@@ -361,10 +409,11 @@ function Get-GmrDescriptor {
     $entries = New-Object 'System.Collections.Generic.List[object]'
     foreach ($record in @(Get-GmrEntryRecords -FilePath $File.FullName)) {
         $displayName = Get-GmrEntryDisplayName -Record $record -DescriptorFile $File
-        $entries.Add([pscustomobject] @{
+        $entry = [pscustomobject] @{
             Value = $record.Value
             Command = $record.Command
             Type = $record.Type
+            Title = $record.Title
             WingetSelector = $record.WingetSelector
             WingetSource = $record.WingetSource
             WingetExact = $record.WingetExact
@@ -373,8 +422,12 @@ function Get-GmrDescriptor {
             Mandatory = [bool] $record.Mandatory
             RequiresElevation = [bool] $record.RequiresElevation
             Enabled = $false
+            StateId = $null
+            StateStatus = 0
             MenuItem = $null
-        })
+        }
+        $entry.StateId = Get-GmrEntryStateId -Entry $entry
+        $entries.Add($entry)
     }
 
     $module = [pscustomobject] @{
@@ -425,10 +478,68 @@ function Test-GmrModuleRequired {
     return $null -ne $property -and [bool]$property.Value
 }
 
+function Get-GmrEntryStateStatus {
+    param([Parameter(Mandatory = $true)][object] $Entry)
+    $property = $Entry.PSObject.Properties['StateStatus']
+    if ($null -eq $property) { return 0 }
+    return [int] $property.Value
+}
+
+function Test-GmrEntryStateLocked {
+    param([Parameter(Mandatory = $true)][object] $Entry)
+    return (Get-GmrEntryStateStatus -Entry $Entry) -ge 2
+}
+
+function Test-GmrEntryStateDisabled {
+    param([Parameter(Mandatory = $true)][object] $Entry)
+    return (Get-GmrEntryStateStatus -Entry $Entry) -ge 4
+}
+
 function Get-GmrEntryLabel {
     param([Parameter(Mandatory = $true)][object] $Entry)
     $requiredSuffix = if (Test-GmrEntryMandatory -Entry $Entry) { ' [required]' } else { '' }
-    return '{0} {1}{2}' -f (Get-GmrCheckbox -Checked $Entry.Enabled), $Entry.DisplayName, $requiredSuffix
+    $status = Get-GmrEntryStateStatus -Entry $Entry
+    if ($status -eq 4) {
+        return '[*] {0}{1}' -f $Entry.DisplayName, $requiredSuffix
+    }
+    $progressSuffix = if ($status -ge 2) { ' [in progress - locked]' } elseif ($status -eq 1) { ' [in progress]' } else { '' }
+    $indicator = if ($status -ge 1 -and $status -le 3) { '[*]' } else { Get-GmrCheckbox -Checked $Entry.Enabled }
+    return '{0} {1}{2}{3}' -f $indicator, $Entry.DisplayName, $requiredSuffix, $progressSuffix
+}
+
+function Save-GmrModuleSelectionState {
+    param([Parameter(Mandatory = $true)][object] $Module)
+    if (-not $script:GmrState.StatePersistenceEnabled) { return }
+    foreach ($entry in $Module.Entries) {
+        $id = if ($entry.PSObject.Properties['StateId']) { $entry.StateId } else { Get-GmrEntryStateId -Entry $entry }
+        $record = Set-GmrStateRecord -RootDirectory $script:GmrRootDirectory -Id $id -Selected $entry.Enabled
+        if ($entry.PSObject.Properties['StateStatus']) { $entry.StateStatus = $record.status }
+    }
+}
+
+function Restore-GmrStateSelections {
+    param([Parameter(Mandatory = $true)][object[]] $Modules)
+    $state = Read-GmrState -RootDirectory $script:GmrRootDirectory
+    foreach ($module in $Modules) {
+        foreach ($entry in $module.Entries) {
+            $record = Get-GmrStateRecord -State $state -Id $entry.StateId
+            if ($null -ne $record) {
+                $entry.Enabled = ([int] $record.status -lt 4) -and ([bool] $record.selected -or ([int] $record.status -ge 2))
+                $entry.StateStatus = [int] $record.status
+            }
+        }
+        Update-GmrModuleLabel -Module $module
+    }
+}
+
+function Set-GmrEntryInstallStatus {
+    param([Parameter(Mandatory = $true)][object] $Entry, [Parameter(Mandatory = $true)][ValidateRange(0, 4)][int] $Status)
+    $Entry.Enabled = $true
+    if ($Entry.PSObject.Properties['StateStatus']) { $Entry.StateStatus = $Status }
+    if ($script:GmrState.StatePersistenceEnabled) {
+        $id = if ($Entry.PSObject.Properties['StateId']) { $Entry.StateId } else { Get-GmrEntryStateId -Entry $Entry }
+        [void] (Set-GmrStateRecord -RootDirectory $script:GmrRootDirectory -Id $id -Selected $true -Status $Status)
+    }
 }
 
 function Get-GmrModuleMode {
@@ -489,7 +600,8 @@ function Set-GmrModuleState {
 
     $effectiveEnabled = $Enabled -or (Test-GmrModuleRequired -Module $Module)
     foreach ($entry in $Module.Entries) {
-        $entry.Enabled = $effectiveEnabled -and ($entry.DefaultEnabled -or (Test-GmrEntryMandatory -Entry $entry))
+        $entry.Enabled = ((Test-GmrEntryStateLocked -Entry $entry) -and -not (Test-GmrEntryStateDisabled -Entry $entry)) -or
+            ((-not (Test-GmrEntryStateDisabled -Entry $entry)) -and $effectiveEnabled -and ($entry.DefaultEnabled -or (Test-GmrEntryMandatory -Entry $entry)))
         Update-GmrEntryLabel -Entry $entry
     }
     Update-GmrModuleLabel -Module $Module
@@ -507,9 +619,12 @@ function New-GmrModuleMenu {
             -Label (Get-GmrEntryLabel -Entry $entry) `
             -GoBack
         $entry.MenuItem = $item
+        $item.Dimmed = (Get-GmrEntryStateStatus -Entry $entry) -eq 4
         $gmrState = $script:GmrState
+        $saveSelection = ${function:Save-GmrModuleSelectionState}
         $item.SpaceAction = {
             $gmrState.SelectionTouched = $true
+            if ($entry.PSObject.Properties['StateStatus'] -and [int] $entry.StateStatus -ge 2) { return }
             $entryMandatoryProperty = $entry.PSObject.Properties['Mandatory']
             $entryIsMandatory = $null -ne $entryMandatoryProperty -and [bool]$entryMandatoryProperty.Value
             $hadSelectedEntries = @($Module.Entries | Where-Object Enabled).Count -gt 0
@@ -530,14 +645,9 @@ function New-GmrModuleMenu {
                 }
             }
             foreach ($moduleEntry in $Module.Entries) {
-                $mandatoryProperty = $moduleEntry.PSObject.Properties['Mandatory']
-                $isMandatory = $null -ne $mandatoryProperty -and [bool]$mandatoryProperty.Value
-                if ($isMandatory) { $moduleEntry.Enabled = $true }
-                $requiredSuffix = if ($isMandatory) { ' [required]' } else { '' }
-                $moduleEntry.MenuItem.Label = '{0} {1}{2}' -f `
-                    $(if ($moduleEntry.Enabled) { '[x]' } else { '[ ]' }),
-                    $moduleEntry.DisplayName,
-                    $requiredSuffix
+                if ((Get-GmrEntryStateStatus -Entry $moduleEntry) -eq 4) { $moduleEntry.Enabled = $true }
+                $moduleEntry.MenuItem.Label = Get-GmrEntryLabel -Entry $moduleEntry
+                $moduleEntry.MenuItem.Dimmed = (Get-GmrEntryStateStatus -Entry $moduleEntry) -eq 4
             }
             $moduleRequiredProperty = $Module.PSObject.Properties['Required']
             $moduleIsRequired = $null -ne $moduleRequiredProperty -and [bool]$moduleRequiredProperty.Value
@@ -553,6 +663,7 @@ function New-GmrModuleMenu {
                 $selectedCount,
                 $Module.Entries.Count,
                 $moduleRequiredSuffix
+            & $saveSelection -Module $Module
         }.GetNewClosure()
         $items.Add($item)
     }
@@ -580,6 +691,7 @@ function New-GmrMainMenu {
             -ChildMenu $childMenu
         $module.MenuItem = $item
         $gmrState = $script:GmrState
+        $saveSelection = ${function:Save-GmrModuleSelectionState}
         $moduleRequiredProperty = $module.PSObject.Properties['Required']
         $moduleIsRequired = $null -ne $moduleRequiredProperty -and [bool]$moduleRequiredProperty.Value
         $item.SpaceAction = {
@@ -589,25 +701,24 @@ function New-GmrMainMenu {
                 foreach ($moduleEntry in $module.Entries) {
                     $mandatoryProperty = $moduleEntry.PSObject.Properties['Mandatory']
                     $isMandatory = $null -ne $mandatoryProperty -and [bool]$mandatoryProperty.Value
-                    $moduleEntry.Enabled = $moduleEntry.DefaultEnabled -or $isMandatory
+                    $moduleEntry.Enabled = ($moduleEntry.PSObject.Properties['StateStatus'] -and [int] $moduleEntry.StateStatus -eq 2) -or
+                        ((-not ($moduleEntry.PSObject.Properties['StateStatus'] -and [int] $moduleEntry.StateStatus -ge 4)) -and ($moduleEntry.DefaultEnabled -or $isMandatory))
                 }
             }
             elseif ($selectedCount -lt $module.Entries.Count) {
                 foreach ($moduleEntry in $module.Entries) {
-                    $moduleEntry.Enabled = $true
+                    $moduleEntry.Enabled = -not ($moduleEntry.PSObject.Properties['StateStatus'] -and [int] $moduleEntry.StateStatus -ge 4)
                 }
             }
             else {
-                foreach ($moduleEntry in $module.Entries) { $moduleEntry.Enabled = $false }
+                foreach ($moduleEntry in $module.Entries) {
+                    $moduleEntry.Enabled = $moduleEntry.PSObject.Properties['StateStatus'] -and [int] $moduleEntry.StateStatus -eq 2
+                }
             }
             foreach ($moduleEntry in $module.Entries) {
-                $mandatoryProperty = $moduleEntry.PSObject.Properties['Mandatory']
-                $isMandatory = $null -ne $mandatoryProperty -and [bool]$mandatoryProperty.Value
-                $requiredSuffix = if ($isMandatory) { ' [required]' } else { '' }
-                $moduleEntry.MenuItem.Label = '{0} {1}{2}' -f `
-                    $(if ($moduleEntry.Enabled) { '[x]' } else { '[ ]' }),
-                    $moduleEntry.DisplayName,
-                    $requiredSuffix
+                if ((Get-GmrEntryStateStatus -Entry $moduleEntry) -eq 4) { $moduleEntry.Enabled = $true }
+                $moduleEntry.MenuItem.Label = Get-GmrEntryLabel -Entry $moduleEntry
+                $moduleEntry.MenuItem.Dimmed = (Get-GmrEntryStateStatus -Entry $moduleEntry) -eq 4
             }
             $selectedCount = @($module.Entries | Where-Object Enabled).Count
             $module.Enabled = $selectedCount -gt 0 -or $moduleIsRequired
@@ -621,6 +732,7 @@ function New-GmrMainMenu {
                 $selectedCount,
                 $module.Entries.Count,
                 $moduleRequiredSuffix
+            & $saveSelection -Module $module
         }.GetNewClosure()
         $items.Add($item)
     }
@@ -658,7 +770,7 @@ function Confirm-GmrAbort {
 function New-GmrExecutionMenu {
     param([Parameter(Mandatory = $true)][ref] $CreateRestorePoint)
 
-    $restoreItem = New-TuiMenuItem -Id 'restore-point' -Label '[x] Create restore point' -Action {}
+    $restoreItem = New-TuiMenuItem -Id 'restore-point' -Label '[ ] Create restore point' -Action {}
     $gmrState = $script:GmrState
     $restoreItem.SpaceAction = {
         $gmrState.SelectionTouched = $true
@@ -704,29 +816,37 @@ function Test-GmrAdministrator {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-function Start-GmrElevatedSelection {
-    param(
-        [Parameter(Mandatory = $true)][object[]] $SelectedEntries,
-        [Parameter(Mandatory = $true)][bool] $CreateRestorePoint
-    )
+function Get-GmrWindowsPowerShellPath {
+    return (Get-Command powershell.exe -CommandType Application -ErrorAction Stop).Source
+}
 
-    $selectionPath = Join-Path ([System.IO.Path]::GetTempPath()) ('GMR-ElevatedSelection-{0}.clixml' -f [guid]::NewGuid().ToString('N'))
-    [pscustomobject] @{ SelectedEntries = $SelectedEntries; CreateRestorePoint = $CreateRestorePoint } |
-        Export-Clixml -LiteralPath $selectionPath -Force
-
-    $arguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath, '-ElevatedSelectionPath', $selectionPath)
+function Start-GmrElevatedSession {
+    $arguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $PSCommandPath, '-ElevatedSession')
+    if ($Clean) { $arguments += '-Clean' }
     if ($script:UseWingetVerbose) { $arguments += '-Verbose' }
     $argumentLine = @($arguments | ForEach-Object { Format-GmrCommandArgument -Argument $_ }) -join ' '
+
     try {
-        $process = Start-Process -FilePath (Join-Path $PSHOME 'powershell.exe') -Verb RunAs -Wait -PassThru -ArgumentList $argumentLine
-        if ($process.ExitCode -ne 0) {
-            Write-Host "Elevated processing failed with exit code $($process.ExitCode)." -ForegroundColor Red
+        $process = Start-Process -FilePath (Get-GmrWindowsPowerShellPath) -Verb RunAs -Wait -PassThru -ArgumentList $argumentLine
+        if ($process.ExitCode -eq 42) {
+            & (Join-Path $script:GmrRootDirectory 'Installers\Reload-Terminal.ps1')
+        }
+        elseif ($process.ExitCode -ne 0) {
+            Write-Host "Elevated GMR session failed with exit code $($process.ExitCode)." -ForegroundColor Red
         }
     }
     catch {
-        Remove-Item -LiteralPath $selectionPath -Force -ErrorAction SilentlyContinue
         Write-Host "Elevation was cancelled or failed: $($_.Exception.Message)" -ForegroundColor Red
     }
+}
+
+function Start-GmrTranscript {
+    $logDirectory = Join-Path $script:GmrRootDirectory 'Logs'
+    New-Item -ItemType Directory -Path $logDirectory -Force -ErrorAction Stop | Out-Null
+    $logPath = Join-Path $logDirectory ('GMR-{0}.log' -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
+    Start-Transcript -LiteralPath $logPath -ErrorAction Stop | Out-Null
+    Write-Host "Logging this GMR session to: $logPath" -ForegroundColor DarkGray
+    return $logPath
 }
 
 function Invoke-GmrSelectedCommands {
@@ -751,15 +871,6 @@ function Invoke-GmrSelectedCommands {
         return
     }
 
-    $requiresElevation = @($SelectedEntries | Where-Object {
-        $elevationProperty = $_.Entry.PSObject.Properties['RequiresElevation']
-        $null -ne $elevationProperty -and [bool] $elevationProperty.Value
-    }).Count -gt 0
-    if ($requiresElevation -and -not $DryRun -and -not (Test-GmrAdministrator)) {
-        Write-Host 'Starting one elevated process for the selected UAC entries.' -ForegroundColor Cyan
-        Start-GmrElevatedSelection -SelectedEntries $SelectedEntries -CreateRestorePoint $CreateRestorePoint
-        return
-    }
 
     if ($CreateRestorePoint) {
         if ($DryRun) { Write-Host '  [DRY RUN] Create Windows system restore point.' }
@@ -780,6 +891,8 @@ function Invoke-GmrSelectedCommands {
         $entry = $selection.Entry
         if ($module.Type -eq '.gmr') {
             if ($entry.Type -eq 'PowerShell') {
+                $exitCode = $null
+                $underlyingExitCode = $null
                 try {
                     $entrySpec = Get-GmrPowerShellEntrySpec -Entry $entry.Command -DescriptorFile $module.File
                     if ($DryRun) {
@@ -792,12 +905,20 @@ function Invoke-GmrSelectedCommands {
                         if (-not (Test-Path -LiteralPath $entrySpec.FilePath -PathType Leaf)) {
                             throw "Child script was not found: $($entrySpec.FilePath)"
                         }
-                        $scriptArguments = [string[]] $entrySpec.Arguments
-                        if ($scriptArguments.Count -gt 0) {
-                            & $entrySpec.FilePath @scriptArguments
+                        $scriptArguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $entrySpec.FilePath) + [string[]] $entrySpec.Arguments
+                        $childOutput = @(& (Get-GmrWindowsPowerShellPath) @scriptArguments 2>&1)
+                        $exitCode = $LASTEXITCODE
+                        foreach ($outputLine in $childOutput) {
+                            Write-Host ([string] $outputLine)
                         }
-                        else {
-                            & $entrySpec.FilePath
+                        if ($exitCode -ne 0) {
+                            $outputText = ($childOutput | ForEach-Object { [string] $_ }) -join [Environment]::NewLine
+                            $underlyingMatch = [regex]::Match($outputText, '(?i)exit code\s+(-?\d+)')
+                            if ($underlyingMatch.Success) {
+                                $underlyingExitCode = $underlyingMatch.Groups[1].Value
+                                throw "Child script exited with code $exitCode (underlying command exit code $underlyingExitCode)."
+                            }
+                            throw "Child script exited with code $exitCode."
                         }
                     }
                     elseif ($entrySpec.Type -eq 'PowerShell') {
@@ -810,34 +931,66 @@ function Invoke-GmrSelectedCommands {
                 }
                 catch {
                     Write-Host "  Failed: $($_.Exception.Message)" -ForegroundColor Red
-                    $results += [pscustomobject] @{ Item = $entry.Value; Type = 'PowerShell'; Success = $false; ExitCode = $null }
+                    $failureExitCode = if ($null -ne $exitCode) { $exitCode } else { $null }
+                    if ($null -ne $underlyingExitCode) {
+                        $failureExitCode = $underlyingExitCode
+                    }
+                    $results += [pscustomobject] @{ Item = $entry.Value; Type = 'PowerShell'; Success = $false; ExitCode = $failureExitCode }
                 }
                 continue
             }
-            $packageSpec = Get-WingetPackageSpec -Entry $entry
-            $wingetArguments = @('install') + $packageSpec.Arguments
-            if ($script:UseWingetVerbose) {
-                $wingetArguments += '--verbose'
+            try {
+                $packageSpec = Get-WingetPackageSpec -Entry $entry
+                $wingetArguments = @('install') + $packageSpec.Arguments
+                if ($script:UseWingetVerbose) {
+                    $wingetArguments += '--verbose'
+                }
+                if ($DryRun) {
+                    $preview = @($wingetArguments | ForEach-Object { Format-GmrCommandArgument -Argument $_ }) -join ' '
+                    Write-Host "  [DRY RUN] winget $preview"
+                    $results += [pscustomobject] @{ Item = $packageSpec.DisplayName; Type = 'WinGet'; Success = $true; ExitCode = $null }
+                    continue
+                }
+                Write-Host "  winget install $($packageSpec.DisplayName)"
+                if ($null -eq $wingetCommand) {
+                    throw 'winget.exe was not found.'
+                }
+
+                if (Test-GmrWingetPackageInstalled -WingetCommand $wingetCommand -PackageSpec $packageSpec) {
+                    Set-GmrEntryInstallStatus -Entry $entry -Status 4
+                    Write-Host "  Warning: $($packageSpec.DisplayName) is already installed; skipping." -ForegroundColor Yellow
+                    $results += [pscustomobject] @{
+                        Item = $packageSpec.DisplayName
+                        Type = 'WinGet'
+                        Success = $true
+                        ExitCode = 0
+                    }
+                    continue
+                }
+
+                Set-GmrEntryInstallStatus -Entry $entry -Status 1
+                Set-GmrEntryInstallStatus -Entry $entry -Status 2
+                & $wingetCommand.Source @wingetArguments
+                $exitCode = $LASTEXITCODE
+                if ($exitCode -ne 0) {
+                    Write-Host "  Failed: winget exited with code $exitCode." -ForegroundColor Red
+                }
+                else {
+                    Set-GmrEntryInstallStatus -Entry $entry -Status 3
+                    if (Test-GmrWingetPackageInstalled -WingetCommand $wingetCommand -PackageSpec $packageSpec) {
+                        Set-GmrEntryInstallStatus -Entry $entry -Status 4
+                    }
+                }
+                $results += [pscustomobject] @{
+                    Item = $packageSpec.DisplayName
+                    Type = 'WinGet'
+                    Success = $exitCode -eq 0
+                    ExitCode = $exitCode
+                }
             }
-            if ($DryRun) {
-                $preview = @($wingetArguments | ForEach-Object { Format-GmrCommandArgument -Argument $_ }) -join ' '
-                Write-Host "  [DRY RUN] winget $preview"
-                $results += [pscustomobject] @{ Item = $packageSpec.DisplayName; Type = 'WinGet'; Success = $true; ExitCode = $null }
-                continue
-            }
-            Write-Host "  winget install $($packageSpec.DisplayName)"
-            if ($null -eq $wingetCommand) {
-                Write-Host '  Failed: winget.exe was not found.' -ForegroundColor Red
-                $results += [pscustomobject] @{ Item = $packageSpec.DisplayName; Type = 'WinGet'; Success = $false; ExitCode = $null }
-                continue
-            }
-            & $wingetCommand.Source @wingetArguments
-            $exitCode = $LASTEXITCODE
-            $results += [pscustomobject] @{
-                Item = $packageSpec.DisplayName
-                Type = 'WinGet'
-                Success = $exitCode -eq 0
-                ExitCode = $exitCode
+            catch {
+                Write-Host "  Failed: $($_.Exception.Message)" -ForegroundColor Red
+                $results += [pscustomobject] @{ Item = $entry.Value; Type = 'WinGet'; Success = $false; ExitCode = $null }
             }
             continue
         }
@@ -856,6 +1009,42 @@ function Invoke-GmrSelectedCommands {
     }
 }
 
+function Wait-GmrContinue {
+    Write-Host ''
+    Write-Host 'Press any key to continue...' -ForegroundColor Yellow
+    try {
+        [void] $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+    }
+    catch {
+        Read-Host 'Press Enter to continue' | Out-Null
+    }
+}
+
+function New-GmrCompletionMenu {
+    $items = @(
+        (New-TuiMenuItem -Id 'back' -Label 'Go back' -Action { 'Back' } -CloseAfterAction)
+        (New-TuiMenuItem -Id 'reload-terminal' -Label 'Reload terminal and quit' -Action { 'ReloadTerminal' } -CloseAfterAction)
+        (New-TuiMenuItem -Id 'quit' -Label 'Quit' -Action { 'Quit' } -CloseAfterAction)
+    )
+    return New-TuiMenu `
+        -Title 'Installation complete' `
+        -Items $items `
+        -ColumnCount 1 `
+        -RowsPerColumn $items.Count `
+        -Toolbar 'Up/Down Select  Enter Choose  Esc Quit'
+}
+
+function Reset-GmrSelections {
+    param([Parameter(Mandatory = $true)][object[]] $Modules)
+
+    foreach ($module in $Modules) {
+        $module.Selected = $false
+        Set-GmrModuleState -Module $module -Enabled $false
+        Save-GmrModuleSelectionState -Module $module
+    }
+    $script:GmrState.SelectionTouched = $false
+}
+
 function Start-GmrBeta {
     param([switch] $Clean)
 
@@ -872,20 +1061,23 @@ function Start-GmrBeta {
     }
 
     $modules = [object[]] @($descriptorFiles | ForEach-Object { Get-GmrDescriptor -File $_ -Clean:$Clean } | Sort-Object SortIndex, @{ Expression = { $_.File.Name } })
+    Restore-GmrStateSelections -Modules $modules
+    $script:GmrState.StatePersistenceEnabled = $true
     $theme = New-TuiTheme -AccentColor Cyan -BackgroundColor Black
     [void] (Set-TuiThemeStyle -Theme $theme -Element Title -ForegroundColor White -Bold $true)
     [void] (Set-TuiThemeStyle -Theme $theme -Element TitleDetail -ForegroundColor Gray -Bold $true)
     $mainMenu = New-GmrMainMenu -Modules $modules
 
     while ($true) {
-        $mainResult = Show-TuiMenu -Menu $mainMenu -Theme $theme
+        while ($true) {
+            $mainResult = Show-TuiMenu -Menu $mainMenu -Theme $theme
         if ($mainResult.ItemId -eq 'continue') { break }
-        if ($mainResult.ItemId -eq 'quit' -or $mainResult.ClosedReason -eq 'Escape') {
-            if (Confirm-GmrAbort -Modules $modules -Theme $theme) { return }
+            if ($mainResult.ItemId -eq 'quit' -or $mainResult.ClosedReason -eq 'Escape') {
+                if (Confirm-GmrAbort -Modules $modules -Theme $theme) { return }
+            }
         }
-    }
 
-    $createRestorePoint = $true
+        $createRestorePoint = $false
     $executionMenu = New-GmrExecutionMenu -CreateRestorePoint ([ref] $createRestorePoint)
     while ($true) {
         $executionResult = Show-TuiMenu -Menu $executionMenu -Theme $theme
@@ -900,32 +1092,47 @@ function Start-GmrBeta {
                     -Modules $modules `
                     -DryRun $dryRun `
                     -CreateRestorePoint $createRestorePoint
-                return
+                Wait-GmrContinue
+                Clear-Host
+
+                $completionMenu = New-GmrCompletionMenu
+                $completionResult = Show-TuiMenu -Menu $completionMenu -Theme $theme
+                if ($completionResult.ItemId -eq 'back') {
+                    Reset-GmrSelections -Modules $modules
+                    break
+                }
+                if ($completionResult.ItemId -eq 'reload-terminal') {
+                    return 'ReloadTerminal'
+                }
+                return 'Quit'
             }
             continue
         }
         if ($executionResult.ItemId -eq 'quit' -or $executionResult.ClosedReason -eq 'Escape') {
             if (Confirm-GmrAbort -Modules $modules -Theme $theme) { return }
+            }
         }
     }
 }
 
 if ($MyInvocation.InvocationName -ne '.') {
-    if (-not [string]::IsNullOrWhiteSpace($ElevatedSelectionPath)) {
-        try {
-            $elevatedSelection = Import-Clixml -LiteralPath $ElevatedSelectionPath
-            Remove-Item -LiteralPath $ElevatedSelectionPath -Force -ErrorAction SilentlyContinue
-            Invoke-GmrSelectedCommands `
-                -DryRun $false `
-                -CreateRestorePoint ([bool] $elevatedSelection.CreateRestorePoint) `
-                -SelectedEntries ([object[]] $elevatedSelection.SelectedEntries)
-        }
-        catch {
-            Write-Host "Elevated processing could not start: $($_.Exception.Message)" -ForegroundColor Red
-            exit 1
-        }
+    if (-not $ElevatedSession -and -not (Test-GmrAdministrator)) {
+        Start-GmrElevatedSession
     }
     else {
-        Start-GmrBeta -Clean:$Clean
+        $transcriptStarted = $false
+        try {
+            [void] (Start-GmrTranscript)
+            $transcriptStarted = $true
+            $gmrResult = Start-GmrBeta -Clean:$Clean
+        }
+        finally {
+            if ($transcriptStarted) {
+                Stop-Transcript | Out-Null
+            }
+        }
+        if ($gmrResult -eq 'ReloadTerminal') {
+            exit 42
+        }
     }
 }
