@@ -1,6 +1,6 @@
-﻿# Programs installable with GetMeReady
+# Programs installable with GetMeReady
 
-This file is generated best-effort from the entry keys and script paths in the GMR descriptors. Run `..\UpdateProgramCatalog.ps1 <registry>` after adding or renaming an installable program.
+This file is generated best-effort from the entry keys and script paths in the GMR descriptors. Run `..\scripts\UpdateProgramCatalog.ps1 <registry>` after adding or renaming an installable program.
 
 ## Web Browsers
 
@@ -16,6 +16,13 @@ This file is generated best-effort from the entry keys and script paths in the G
 - Alacritty
 - WezTerm
 
+## Applications
+
+- Obsidian
+- Bitwarden
+- MDView
+- Visual Studio Community
+
 ## Graphics & Media
 
 - VLC
@@ -29,16 +36,32 @@ This file is generated best-effort from the entry keys and script paths in the G
 - Blender
 - FreeCAD
 - KiCad
+- f.lux
+- Spotify
+- Discord
+- Balena Etcher
+- Slack
+- Dropbox
+- Google Drive
+- OneDrive
+- VMware Player
+- LocalSend
+- PDFgear
+- Raspberry Pi Imager
+
+## Gaming
+
+- PlayNite
 
 ## Developer
 
-- Git
-- Neovim
-- LazyVim
-- Node.js
+- !"Git
+- ?"Neovim
+- ?"LazyVim
+- js
 - Lua
 - Visual Studio Code
-- OpenCode
+- ?"OpenCode
 - Codex CLI
 - GitHub CLI
 - Antigravity 2.0
