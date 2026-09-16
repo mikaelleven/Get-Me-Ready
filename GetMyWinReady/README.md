@@ -1,6 +1,6 @@
 # GetMeReady
 
-## Vad är GetMeReady?
+## What Is GetMeReady?
 
 GetMeReady (GMR) is a PowerShell-based bootstrapper for a new Windows computer. It collects the software, tools and follow-up actions you want, then performs the selected base installation with as little interaction as possible.
 
@@ -14,13 +14,17 @@ Run this in an interactive PowerShell session to download GMR to
 `$HOME\GetMeReady` and start the installer:
 
 ```powershell
-irm https://raw.githubusercontent.com/mikaelleven/Get-Me-Ready/master/GetMyWinReady/Install-GMR.ps1 | iex
+irm https://raw.githubusercontent.com/w33zl/GetMeReady/master/GetMyWinReady/Install-GMR.ps1 | iex
 ```
 
-The command downloads and executes remote code. Review
-[Install-GMR.ps1](Install-GMR.ps1) before running it if you do not trust the
-source. It refuses to overwrite an existing installation; download the script
-locally to choose another path or use its `-Force` option.
+> [!WARNING]
+> This command downloads and executes remote code. Review
+> [Install-GMR.ps1](Install-GMR.ps1) before running it if you do not trust the
+> source.
+>
+> The installer refuses to overwrite an existing installation. To use another
+> path or overwrite an existing installation, download the script locally and
+> run it with the `-Force` option.
 
 Requirements:
 
@@ -29,11 +33,11 @@ Requirements:
 - An interactive PowerShell session
 - Permission to approve one UAC prompt when GMR starts
 
-Clone the repository and start it from its root:
+Clone the repository and start GMR from its Windows configuration directory:
 
 ```powershell
 git clone https://github.com/w33zl/GetMeReady.git
-Set-Location .\GetMeReady
+Set-Location .\GetMeReady\GetMyWinReady
 ```
 
 If script execution is blocked on a newly installed computer, allow it only for the current PowerShell process:
@@ -42,9 +46,26 @@ If script execution is blocked on a newly installed computer, allow it only for 
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-## Kom igång
+## Chris Titus WinUtil
 
-### Primärt PowerShell-kommando
+[Chris Titus WinUtil](https://github.com/ChrisTitusTech/winutil) is a widely used tool for Windows power users and a recommended installation. GMR also relies partly on the conventions and capabilities provided by WinUtil.
+
+When installed through the **PowerUser** category, WinUtil provides:
+
+- A convenient Start menu shortcut.
+- A `winutil` command available from Windows Terminal.
+
+For security, GMR pins WinUtil to a verified version and SHA256 hash rather than automatically trusting whatever the latest release happens to be. If you want to promote the latest version manually, run:
+
+```powershell
+winutil --promote-latest
+```
+
+You must then manually provide the SHA256 hash from a trusted source. For example, verify the hash against the official [Chris Titus Tech WinUtil GitHub repository](https://github.com/ChrisTitusTech/winutil) or its official release information before accepting the new version.
+
+## Getting Started
+
+### Main PowerShell Command
 
 ```powershell
 .\GMR.ps1
@@ -76,7 +97,7 @@ Choose 0-1: 1
 
 `# cn:` groups alternatives under one menu choice. In the example, **Core** and **Core (Lite)** are mutually exclusive variants. Use `-Verbose` to display each group's entries in the menu.
 
-### Återställningspunkt
+### Restore Point
 
 Choose **Yes** when you want Windows to create a restore point before any selected package or action is processed. This requires an elevated PowerShell session; if creation fails, GMR aborts before making the selected changes.
 
@@ -92,7 +113,7 @@ Or require a restore point (run PowerShell as Administrator):
 .\GMR.ps1 -CreateRestorePoint
 ```
 
-### Anpassad installation
+### Custom Installation
 
 Preview the selected installation without making any changes:
 
@@ -108,7 +129,7 @@ Show the contents of each selectable group:
 
 Select only the groups you need during the menu. Selecting `None` skips a group.
 
-### Installationsstatus
+### Installation Status
 
 GMR stores the selection and progress for each installable entry in `.gmr-state.json` beside `GMR.ps1`. The file is machine-local state, not a descriptor: do not copy it between installations or edit it to mark software as installed.
 
@@ -138,15 +159,15 @@ GMR resolves the state ID in priority order: WinGet package ID, an explicit cust
 
 When GMR restores this file, the TUI restores saved selections but still applies required and mandatory locks. A required module or mandatory entry cannot be deselected through restored state. Entries with status `2` remain selected and locked. Entries with status `3` (completed) or `4` (verified) remain disabled; status `4` is visibly marked as verified.
 
-## Anpassning
+## Customization
 
-Se [ProgramCatalog.md](ProgramCatalog.md) för en hierarkisk förteckning över alla program som kan installeras med GMR. Katalogen genereras deterministiskt från programnycklar och skriptvägar i deskriptorerna, med undantag i `tools\ProgramNameExceptions.json`, och ska uppdateras med `.\tools\Update-ProgramCatalog.ps1` när program läggs till, tas bort eller byter namn.
+See [ProgramCatalog.md](ProgramCatalog.md) for a hierarchical list of every program that GMR can install. The catalog is generated deterministically from descriptor program keys and script paths, with exceptions in `tools\ProgramNameExceptions.json`. Update it with `.\tools\Update-ProgramCatalog.ps1` whenever programs are added, removed, or renamed.
 
-Kontrollera befintliga programnamn med `.\tools\Repair-ProgramNames.ps1`. Scriptet listar avvikelser som `auto` eller `manual`, frågar innan auto-förslag registreras och uppdaterar därefter katalogen. Använd `-ListOnly` för en läsanalys. Använd projektskillen `/find-name` när manuella namnförslag uttryckligen efterfrågas.
+Check existing program names with `.\tools\Repair-ProgramNames.ps1`. The script lists discrepancies as `auto` or `manual`, asks before registering automatic suggestions, and then updates the catalog. Use `-ListOnly` for a read-only review. Use the `/find-name` project skill when manual name suggestions are explicitly requested.
 
 Keep your personal `.gmr` and `.gmrs` files beside `GMR.ps1`. They are automatically discovered the next time GMR starts. Give files clear names, for example `Workstation.gmr` or `MyTweaks.gmrs`.
 
-### Lägg till egna rader
+### Add Your Own Entries
 
 Use a `.gmr` file for WinGet packages—one package specification per line:
 
@@ -215,7 +236,7 @@ For XML, the path identifies the parent and new final element; the text block is
 .\tools\Add-TextBlock.ps1 '.\settings.xml' -Inject '/schemas[1]/myitem' '<value>Abc123</value>'
 ```
 
-### GMR-syntax
+### GMR Syntax
 
 | Syntax | Meaning |
 | --- | --- |
@@ -233,7 +254,7 @@ For XML, the path identifies the parent and new final element; the text block is
 
 For example, `?> Microsoft.Edge`, `!> Vivaldi.Vivaldi`, `^> Microsoft.Sysinternals`, `"Write Hello" : $> Write-Host 'Hello'`, and `fuzzy name msstore> "Google Chrome"` are valid `.gmr` entries. GMR requests UAC elevation once when it starts and runs the complete session elevated. The `^` prefix remains accepted for compatibility. Each session is saved under `Logs\`.
 
-## Vidareutveckling
+## Development
 
 The current stable beta entry point is [GMR.ps1](GMR.ps1). Keep changes compatible with Windows PowerShell 5.1, add or update descriptors to cover new setup behavior, and use a dry run before executing a changed configuration:
 
@@ -253,11 +274,11 @@ $errors
 
 Custom installer scripts must use GMR's state helper functions rather than writing `.gmr-state.json` directly. Resolve the entry through its stable state ID, preserve the `selected` value, and transition status in order (`1` selected, `2` running, `3` completed). Mark an entry as `4` (verified) only after the installer has checked the result independently—for example, by locating the expected executable, querying the installed package or registry entry, or validating the required configuration. A successful process exit alone is not verification. Keep installer helpers and their verification checks compatible with Windows PowerShell 5.1.
 
-## FAQ och felsökning
+## FAQ and Troubleshooting
 
 **GMR says `winget.exe was not found`.** Install or update App Installer/WinGet, restart PowerShell, and run the command again.
 
-**PowerShell blocks the script.** Use the process-scoped `Set-ExecutionPolicy` command shown above, or follow your organisation's execution-policy rules.
+**PowerShell blocks the script.** Use the process-scoped `Set-ExecutionPolicy` command shown above, or follow your organization's execution-policy rules.
 
 **Restore point creation fails.** Start PowerShell as Administrator, verify that System Protection is enabled for the system drive, then retry. GMR intentionally stops before package installation if the requested restore point cannot be created.
 
@@ -267,10 +288,6 @@ Custom installer scripts must use GMR's state helper functions rather than writi
 
 **Why is an expected group missing?** Ensure that its file ends in `.gmr` or `.gmrs` and is placed beside `GMR.ps1`; files with other extensions are ignored.
 
-## Licens
+## License
 
 GetMeReady is licensed under the [MIT License](LICENSE).
-
----
-
-Created by Mikael Levén · GetMeReady v0.8 · Copyright © 2026 Mikael Levén

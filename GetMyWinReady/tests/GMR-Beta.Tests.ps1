@@ -88,6 +88,27 @@ Describe 'GMR beta menu model' {
         $requiredModule.Entries[0].Enabled | Should -Be $true
     }
 
+    It 'supports hidden categories and hides categories without entries' {
+        $hiddenPath = Join-Path $TestDrive 'Hidden.gmr'
+        Set-Content -LiteralPath $hiddenPath -Value @(
+            '# hidden: true'
+            'Hidden.Package'
+        )
+        $hiddenModule = Get-GmrDescriptor -File (Get-Item -LiteralPath $hiddenPath)
+        $hiddenModule.Hidden | Should -Be $true
+        $hiddenModule.Entries.Count | Should -Be 1
+
+        $emptyPath = Join-Path $TestDrive 'Empty.gmr'
+        Set-Content -LiteralPath $emptyPath -Value @('# name: Empty category', '# comment')
+        $emptyModule = Get-GmrDescriptor -File (Get-Item -LiteralPath $emptyPath)
+        $emptyModule.Hidden | Should -Be $true
+        $emptyModule.Entries.Count | Should -Be 0
+
+        $visiblePath = Join-Path $TestDrive 'Visible.gmr'
+        Set-Content -LiteralPath $visiblePath -Value @('# hidden: false', 'Visible.Package')
+        (Get-GmrDescriptor -File (Get-Item -LiteralPath $visiblePath)).Hidden | Should -Be $false
+    }
+
     It 'rejects .gmrs descriptors' {
         $path = Join-Path $TestDrive 'Unsupported.gmrs'
         Set-Content -LiteralPath $path -Value 'Write-Host Hello'
