@@ -1,10 +1,18 @@
-# name: Terminal Tools & Tweaks
-# sortindex: 145
+# name: AI & Terminal Tools
+# sortindex: 1100
 
+?> Busybox.Busybox
+? "Alacritty"> Alacritty.Alacritty
+? "WezTerm"> wez.wezterm
+?> psmux
+?> psmux.psnet
+?> marlocarlo.pstop
 ? "Herdr" : $> irm https://herdr.dev/install.ps1 | iex
-"Hermes" : $> irm https://hermes-agent.nousresearch.com/install.ps1 | iex
-"Alacritty" : Alacritty.Alacritty
-"WezTerm" : wez.wezterm
-psmux
-psmux.psnet
-marlocarlo.pstop
+? "Hermes" : $> irm https://hermes-agent.nousresearch.com/install.ps1 | iex
+?"OpenCode" $> curl -fsSL https://opencode.ai/install | bash
+"Codex CLI" $> npm install --global @openai/codex
+"GitHub CLI" : $> .\Installers\Install-GitHubCli.ps1
+"Antigravity 2.0" : Google.Antigravity
+"Antigravity CLI" : $> irm https://antigravity.google/cli/install.ps1 | iex
+Ollama.Ollama
+?> ElementLabs.LMStudio
